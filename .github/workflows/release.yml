@@ -39,10 +39,10 @@ jobs:
       version: ${{ steps.meta.outputs.version }}
 
   test:
-    permissions:
-      contents: write
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    container:
+      image: docker://rust:1.60
     steps:
       - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
       - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748

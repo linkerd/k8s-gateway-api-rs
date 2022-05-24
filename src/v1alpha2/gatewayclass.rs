@@ -1,7 +1,22 @@
 use super::*;
 
-/// Gateway represents an instance of a service-traffic handling infrastructure
-/// by binding Listeners to a set of IP addresses.
+// GatewayClass describes a class of Gateways available to the user for creating
+// Gateway resources.
+//
+// It is recommended that this resource be used as a template for Gateways. This
+// means that a Gateway is based on the state of the GatewayClass at the time it
+// was created and changes to the GatewayClass or associated parameters are not
+// propagated down to existing Gateways. This recommendation is intended to
+// limit the blast radius of changes to GatewayClass or associated parameters.
+// If implementations choose to propagate GatewayClass changes to existing
+// Gateways, that MUST be clearly documented by the implementation.
+//
+// Whenever one or more Gateways are using a GatewayClass, implementations MUST
+// add the `gateway-exists-finalizer.gateway.networking.k8s.io` finalizer on the
+// associated GatewayClass. This ensures that a GatewayClass associated with a
+// Gateway is not deleted while in use.
+//
+// GatewayClass is a Cluster level resource.
 #[derive(
     Clone, Debug, kube::CustomResource, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
 )]
@@ -9,8 +24,7 @@ use super::*;
     group = "gateway.networking.k8s.io/v1alpha2",
     version = "v1alpha2",
     kind = "GatewayClass",
-    status = "GatewayClassStatus",
-    namespaced
+    status = "GatewayClassStatus"
 )]
 #[serde(rename_all = "camelCase")]
 pub struct GatewayClassSpec {
@@ -41,19 +55,36 @@ pub struct GatewayClassSpec {
     pub description: Option<String>,
 }
 
+/// ParametersReference identifies an API object containing controller-specific
+/// configuration resource within the cluster.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
 pub struct ParametersReference {
+    /// Group is the group of the referent.
     pub group: Group,
+
+    /// Kind is the kind of the referent.
     pub kind: Kind,
+
+    /// Name is the name of the referent.
     pub name: String,
+
+    /// Namespace is the namespace of the referent.
+    ///
+    /// This field is required when referring to a Namespace-scoped resource and
+    /// MUST be unset when referring to a Cluster-scoped resource.
     pub namespace: Option<String>,
 }
 
+/// GatewayClassConditionType is the type for status conditions on
+/// Gateway resources. This type should be used with the
+/// GatewayClassStatus.Conditions field.
 pub type GatewayClassConditionType = String;
+
+/// GatewayClassConditionReason defines the set of reasons that explain why a
+/// particular GatewayClass condition type has been raised.
 pub type GatewayClassConditionReason = String;
 
-pub type GatewayController = String;
-
+/// GatewayClassStatus is the current status for the GatewayClass.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
 pub struct GatewayClassStatus {
     /// Conditions is the current status from the controller for this

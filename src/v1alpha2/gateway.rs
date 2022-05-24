@@ -19,7 +19,7 @@ pub struct GatewaySpec {
     /// GatewayClass resource.
     pub gateway_class_name: ObjectName,
 
-    // Listeners associated with this Gateway. Listeners define logical
+    /// Listeners associated with this Gateway. Listeners define logical
     /// endpoints that are bound on this Gateway's addresses.  At least one
     /// Listener MUST be specified.
     ///
@@ -59,29 +59,29 @@ pub struct GatewaySpec {
     /// Support: Core
     pub listeners: Vec<Listener>,
 
-    // Addresses requested for this Gateway. This is optional and behavior can
-    // depend on the implementation. If a value is set in the spec and the
-    // requested address is invalid or unavailable, the implementation MUST
-    // indicate this in the associated entry in GatewayStatus.Addresses.
-    //
-    // The Addresses field represents a request for the address(es) on the
-    // "outside of the Gateway", that traffic bound for this Gateway will use.
-    // This could be the IP address or hostname of an external load balancer or
-    // other networking infrastructure, or some other address that traffic will
-    // be sent to.
-    //
-    // The .listener.hostname field is used to route traffic that has already
-    // arrived at the Gateway to the correct in-cluster destination.
-    //
-    // If no Addresses are specified, the implementation MAY schedule the
-    // Gateway in an implementation-specific manner, assigning an appropriate
-    // set of Addresses.
-    //
-    // The implementation MUST bind all Listeners to every GatewayAddress that
-    // it assigns to the Gateway and add a corresponding entry in
-    // GatewayStatus.Addresses.
-    //
-    // Support: Extended
+    /// Addresses requested for this Gateway. This is optional and behavior can
+    /// depend on the implementation. If a value is set in the spec and the
+    /// requested address is invalid or unavailable, the implementation MUST
+    /// indicate this in the associated entry in GatewayStatus.Addresses.
+    ///
+    /// The Addresses field represents a request for the address(es) on the
+    /// "outside of the Gateway", that traffic bound for this Gateway will use.
+    /// This could be the IP address or hostname of an external load balancer or
+    /// other networking infrastructure, or some other address that traffic will
+    /// be sent to.
+    ///
+    /// The .listener.hostname field is used to route traffic that has already
+    /// arrived at the Gateway to the correct in-cluster destination.
+    ///
+    /// If no Addresses are specified, the implementation MAY schedule the
+    /// Gateway in an implementation-specific manner, assigning an appropriate
+    /// set of Addresses.
+    ///
+    /// The implementation MUST bind all Listeners to every GatewayAddress that
+    /// it assigns to the Gateway and add a corresponding entry in
+    /// GatewayStatus.Addresses.
+    ///
+    /// Support: Extended
     pub addresses: Option<Vec<GatewayAddress>>,
 }
 
@@ -129,8 +129,43 @@ pub struct Listener {
     /// Support: Core
     pub protocol: ProtocolType,
 
+    /// TLS is the TLS configuration for the Listener. This field is required if
+    /// the Protocol field is "HTTPS" or "TLS". It is invalid to set this field
+    /// if the Protocol field is "HTTP", "TCP", or "UDP".
+    ///
+    /// The association of SNIs to Certificate defined in GatewayTLSConfig is
+    /// defined based on the Hostname field for this listener.
+    ///
+    /// The GatewayClass MUST use the longest matching SNI out of all available
+    /// certificates for any TLS handshake.
+    ///
+    /// Support: Core
     pub tls: Option<GatewayTlsConfig>,
 
+    /// AllowedRoutes defines the types of routes that MAY be attached to a
+    /// Listener and the trusted namespaces where those Route resources MAY be
+    /// present.
+    ///
+    /// Although a client request may match multiple route rules, only one rule
+    /// may ultimately receive the request. Matching precedence MUST be
+    /// determined in order of the following criteria:
+    ///
+    /// * The most specific match as defined by the Route type.
+    /// * The oldest Route based on creation timestamp. For example, a Route
+    ///   with a creation timestamp of "2020-09-08 01:02:03" is given precedence
+    ///   over a Route with a creation timestamp of "2020-09-08 01:02:04".
+    /// * If everything else is equivalent, the Route appearing first in
+    ///   alphabetical order (namespace/name) should be given precedence. For
+    ///   example, foo/bar is given precedence over foo/baz.
+    ///
+    /// All valid rules within a Route attached to this Listener should be
+    /// implemented. Invalid Route rules can be ignored (sometimes that will
+    /// mean the full Route). If a Route rule transitions from valid to invalid,
+    /// support for that Route rule should be dropped to ensure consistency. For
+    /// example, even if a filter specified by a Route rule is invalid, the rest
+    /// of the rules within that Route should still be supported.
+    ///
+    /// Support: Core
     pub allowed_routes: Option<AllowedRoutes>,
 }
 
@@ -222,6 +257,7 @@ pub struct GatewayTlsConfig {
 /// TLSModeType type defines how a Gateway handles TLS sessions.
 pub type TlsModeType = String;
 
+/// AllowedRoutes defines which Routes may be attached to this Listener.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct AllowedRoutes {
@@ -250,13 +286,28 @@ pub struct AllowedRoutes {
 /// Gateway.
 pub type FromNamespaces = String;
 
+/// RouteNamespaces indicate which namespaces Routes should be selected from.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
 pub struct RouteNamespaces {
+    /// From indicates where Routes will be selected for this Gateway. Possible
+    /// values are:
+    /// * All: Routes in all namespaces may be used by this Gateway.
+    /// * Selector: Routes in namespaces selected by the selector may be used by
+    ///   this Gateway.
+    /// * Same: Only Routes in the same namespace may be used by this Gateway.
+    ///
+    /// Support: Core
     pub from: Option<FromNamespaces>,
 
-    pub selector: metav1::LabelSelector,
+    /// Selector must be specified when From is set to "Selector". In that case,
+    /// only Routes in Namespaces matching this Selector will be selected by this
+    /// Gateway. This field is ignored for other values of "From".
+    ///
+    /// Support: Core
+    pub selector: Option<metav1::LabelSelector>,
 }
 
+/// RouteGroupKind indicates the group and kind of a Route resource.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
 pub struct RouteGroupKind {
     /// Group is the group of the Route.
@@ -266,6 +317,7 @@ pub struct RouteGroupKind {
     pub kind: String,
 }
 
+/// GatewayAddress describes an address that can be bound to a Gateway.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
 pub struct GatewayAddress {
     /// Type of the address.
@@ -278,6 +330,7 @@ pub struct GatewayAddress {
     pub value: String,
 }
 
+/// GatewayStatus defines the observed state of Gateway.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
 pub struct GatewayStatus {
     /// Addresses lists the IP addresses that have actually been bound to the
@@ -302,10 +355,16 @@ pub struct GatewayStatus {
     pub listeners: Option<Vec<ListenerStatus>>,
 }
 
+/// GatewayConditionType is a type of condition associated with a
+/// Gateway. This type should be used with the GatewayStatus.Conditions
+/// field.
 pub type GatewayConditionType = String;
 
+/// GatewayConditionReason defines the set of reasons that explain why a
+/// particular Gateway condition type has been raised.
 pub type GatewayConditionReason = String;
 
+/// ListenerStatus is the status associated with a Listener.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
 pub struct ListenerStatus {
     /// Name is the name of the Listener that this status corresponds to.
@@ -330,6 +389,10 @@ pub struct ListenerStatus {
     pub conditions: Vec<metav1::Condition>,
 }
 
+/// ListenerConditionType is a type of condition associated with the listener.
+/// This type should be used with the ListenerStatus.Conditions field.
 pub type ListenerConditionType = String;
 
+/// ListenerConditionReason defines the set of reasons that explain why a
+/// particular Listener condition type has been raised.
 pub type ListenerConditionReason = String;

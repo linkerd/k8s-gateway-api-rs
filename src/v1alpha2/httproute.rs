@@ -71,7 +71,7 @@ pub struct HttpRouteRule {
     ///
     /// For example, take the following matches configuration:
     ///
-    /// ```
+    /// ```yaml
     /// matches:
     /// - path:
     ///     value: "/foo"
@@ -300,7 +300,7 @@ pub type HttpMethod = String;
 /// For example, the match below will match a HTTP request only if its path
 /// starts with `/foo` AND it contains the `version: v1` header:
 ///
-/// ```
+/// ```yaml
 /// match:
 ///   path:
 ///     value: "/foo"

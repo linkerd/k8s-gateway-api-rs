@@ -65,7 +65,7 @@ jobs:
         run: |
           curl --proto '=https' --tlsv1.3 -fsSL https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o $HOME/jq
           chmod 755 $HOME/jq
-          version=$(cargo metadata --format-version=1 | $HOME/jq -r '.packages[] | select(.name == "kubert") | .version')
+          version=$(cargo metadata --format-version=1 | $HOME/jq -r '.packages[] | select(.name == "k8s-gateway-api") | .version')
           if [[ "v${version}" != "${{ needs.meta.outputs.version }}" ]]; then
             echo "::error ::Crate version v${version} does not match tag ${{ needs.meta.outputs.version }}"
             exit 1

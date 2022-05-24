@@ -26,12 +26,12 @@ jobs:
       - id: meta
         shell: bash
         run: |
-          ref="${{ github.ref }}"
+          ref=${{ github.ref }}
           if [[ "$ref" == refs/tags/release/* ]]; then
-            echo ::set-output name=publish=::true
+            echo ::set-output name=publish::true
             echo ::set-output name=version::"${ref##refs/tags/release/}"
           else
-            sha="${{ github.sha }}"
+            sha=${{ github.sha }}
             echo ::set-output name=version::"test-${sha:0:7}"
           fi
     outputs:
@@ -86,7 +86,6 @@ jobs:
     steps:
       - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
       - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
-      - run: just fetch
       - run: just publish --dry-run
       - if: needs.meta.outputs.publish
         run: just publish --token=${{ secrets.CRATESIO_TOKEN }}

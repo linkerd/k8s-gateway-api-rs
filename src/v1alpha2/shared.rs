@@ -1,5 +1,12 @@
 use super::*;
 
+/// ParentReference identifies an API object (usually a Gateway) that can be considered
+/// a parent of this resource (usually a route). The only kind of parent resource
+/// with "Core" support is Gateway. This API may be extended in the future to
+/// support additional kinds of parent resources, such as HTTPRoute.
+///
+/// The API object must be valid in the cluster; the Group and Kind must
+/// be registered in the cluster for this reference to be valid.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct ParentReference {
@@ -182,6 +189,8 @@ pub struct RouteParentStatus {
     pub conditions: Vec<metav1::Condition>,
 }
 
+/// RouteStatus defines the common attributes that all Routes MUST include
+/// within their status.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
 pub struct RouteStatus {
     /// Parents is a list of parent resources (usually Gateways) that are
@@ -193,8 +202,8 @@ pub struct RouteStatus {
     ///
     /// Note that parent references that cannot be resolved by an implementation
     /// of this API will not be added to this list. Implementations of this API
-    /// can only populate Route status for the Gateways/parent resources they are
-    /// responsible for.
+    /// can only populate Route status for the Gateways/parent resources they
+    /// are responsible for.
     ///
     /// A maximum of 32 Gateways will be represented in this list. An empty list
     /// means the route has not been attached to any Gateway.

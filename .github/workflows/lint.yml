@@ -1,0 +1,53 @@
+name: lint
+
+on:
+  pull_request:
+    paths:
+      - Cargo.toml
+      - '**/*.rs'
+      - .github/workflows/lint.yml
+
+permissions:
+  contents: read
+
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
+
+jobs:
+  fmt:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    container:
+      image: docker://rust:1.60
+    steps:
+      - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+      - run: rustup component add rustfmt
+      - run: just check-fmt
+
+  clippy:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    container:
+      image: docker://rust:1.60
+    steps:
+      - run: rustup component add clippy
+      - uses: olix0r/cargo-action-fmt@ee1ef42932e44794821dab57ef1bf7a73df8b21f
+      - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+      - run: just fetch
+      - run: just clippy
+
+  docs:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    container:
+      image: docker://rust:1.60
+    steps:
+      - uses: olix0r/cargo-action-fmt@ee1ef42932e44794821dab57ef1bf7a73df8b21f
+      - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+      - run: just fetch
+      - run: just docs

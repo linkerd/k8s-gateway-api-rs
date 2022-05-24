@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
 repository = "https://github.com/linkerd/k8s-gateway-api"
-rust-version = "1.60.0"
+rust-version = "1.60"
 keywords = ["kubernetes", "gateway"]
 description = "Rust bindings for the Kubenetes Gateway API"
 

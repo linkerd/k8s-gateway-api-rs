@@ -28,4 +28,3 @@ pub struct TcpRouteStatus {
 pub struct TcpRouteRule {
     pub backend_refs: Vec<BackendRef>,
 }
-

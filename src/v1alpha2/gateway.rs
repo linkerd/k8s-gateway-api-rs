@@ -7,7 +7,7 @@ use std::collections::BTreeMap;
     Clone, Debug, kube::CustomResource, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
 )]
 #[kube(
-    group = "gateway.networking.k8s.io/v1alpha2",
+    group = "gateway.networking.k8s.io",
     version = "v1alpha2",
     kind = "Gateway",
     status = "GatewayStatus",

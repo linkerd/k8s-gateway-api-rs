@@ -181,7 +181,12 @@ pub struct HttpRouteRule {
 ///
 /// - Must begin with the `/` character
 /// - Must not contain consecutive `/` characters (e.g. `/foo///`, `//`).
-pub type PathMatchType = String;
+#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+pub enum PathMatchType {
+    Exact,
+    PathPrefix,
+    RegularExpression,
+}
 
 /// HTTPPathMatch describes how to select a HTTP route by matching the HTTP request path.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
@@ -202,7 +207,11 @@ pub struct HttpPathMatch {
 ///
 /// * "Exact"
 /// * "RegularExpression"
-pub type HeaderMatchType = String;
+#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+pub enum HeaderMatchType {
+    Exact,
+    RegularExpression,
+}
 
 /// HTTPHeaderName is the name of an HTTP header.
 ///
@@ -259,7 +268,11 @@ pub struct HttpHeaderMatch {
 ///
 /// * "Exact"
 /// * "RegularExpression"
-pub type QueryParamMatchType = String;
+#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+pub enum QueryParamMatchType {
+    Exact,
+    RegularExpression,
+}
 
 /// HTTPQueryParamMatch describes how to select a HTTP route by matching HTTP
 /// query parameters.

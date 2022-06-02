@@ -12,7 +12,8 @@ use super::*;
 #[kube(
     group = "gateway.networking.k8s.io",
     version = "v1alpha2",
-    kind = "TlsRoute",
+    kind = "TLSRoute",
+    struct = "TlsRoute",
     status = "TlsRouteStatus",
     namespaced
 )]

@@ -10,7 +10,8 @@ use super::*;
 #[kube(
     group = "gateway.networking.k8s.io",
     version = "v1alpha2",
-    kind = "HttpRoute",
+    kind = "HTTPRoute",
+    struct = "HttpRoute",
     status = "HttpRouteStatus",
     namespaced
 )]

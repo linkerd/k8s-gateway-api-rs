@@ -10,11 +10,11 @@ use super::*;
 #[kube(
     group = "gateway.networking.k8s.io",
     version = "v1alpha2",
-    kind = "HttpRoute",
+    kind = "HTTPRoute",
+    struct = "HttpRoute",
     status = "HttpRouteStatus",
     namespaced
 )]
-#[serde(rename_all = "camelCase")]
 pub struct HttpRouteSpec {
     /// Common route information.
     #[serde(flatten)]
@@ -170,142 +170,6 @@ pub struct HttpRouteRule {
     pub backend_refs: Option<Vec<HttpBackendRef>>,
 }
 
-/// PathMatchType specifies the semantics of how HTTP paths should be compared.
-/// Valid PathMatchType values are:
-///
-/// * "Exact"
-/// * "PathPrefix"
-/// * "RegularExpression"
-///
-/// PathPrefix and Exact paths must be syntactically valid:
-///
-/// - Must begin with the `/` character
-/// - Must not contain consecutive `/` characters (e.g. `/foo///`, `//`).
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-pub enum PathMatchType {
-    Exact,
-    PathPrefix,
-    RegularExpression,
-}
-
-/// HTTPPathMatch describes how to select a HTTP route by matching the HTTP request path.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-pub struct HttpPathMatch {
-    /// Type specifies how to match against the path Value.
-    ///
-    /// Support: Core (Exact, PathPrefix)
-    ///
-    /// Support: Custom (RegularExpression)
-    pub r#type: Option<PathMatchType>,
-
-    /// Value of the HTTP path to match against.
-    pub value: Option<String>,
-}
-
-/// HeaderMatchType specifies the semantics of how HTTP header values should be
-/// compared. Valid HeaderMatchType values are:
-///
-/// * "Exact"
-/// * "RegularExpression"
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-pub enum HeaderMatchType {
-    Exact,
-    RegularExpression,
-}
-
-/// HTTPHeaderName is the name of an HTTP header.
-///
-/// Valid values include:
-///
-/// * "Authorization"
-/// * "Set-Cookie"
-///
-/// Invalid values include:
-///
-/// * ":method" - ":" is an invalid character. This means that HTTP/2 pseudo
-///   headers are not currently supported by this type.
-/// * "/invalid" - "/" is an invalid character
-pub type HttpHeaderName = String;
-
-/// HTTPHeaderMatch describes how to select a HTTP route by matching HTTP
-/// request headers.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-pub struct HttpHeaderMatch {
-    /// Type specifies how to match against the value of the header.
-    ///
-    /// Support: Core (Exact)
-    ///
-    /// Support: Custom (RegularExpression)
-    ///
-    /// Since RegularExpression HeaderMatchType has custom conformance,
-    /// implementations can support POSIX, PCRE or any other dialects of regular
-    /// expressions. Please read the implementation's documentation to determine
-    /// the supported dialect.
-    pub r#type: Option<HeaderMatchType>,
-
-    /// Name is the name of the HTTP Header to be matched. Name matching MUST be
-    /// case insensitive. (See <https://tools.ietf.org/html/rfc7230#section-3.2>).
-    ///
-    /// If multiple entries specify equivalent header names, only the first
-    /// entry with an equivalent name MUST be considered for a match. Subsequent
-    /// entries with an equivalent header name MUST be ignored. Due to the
-    /// case-insensitivity of header names, "foo" and "Foo" are considered
-    /// equivalent.
-    ///
-    /// When a header is repeated in an HTTP request, it is
-    /// implementation-specific behavior as to how this is represented.
-    /// Generally, proxies should follow the guidance from the RFC:
-    /// <https://www.rfc-editor.org/rfc/rfc7230.html#section-3.2.2> regarding
-    /// processing a repeated header, with special handling for "Set-Cookie".
-    pub name: HttpHeaderName,
-
-    /// Value is the value of HTTP Header to be matched.
-    pub value: String,
-}
-
-/// QueryParamMatchType specifies the semantics of how HTTP query parameter
-/// values should be compared. Valid QueryParamMatchType values are:
-///
-/// * "Exact"
-/// * "RegularExpression"
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-pub enum QueryParamMatchType {
-    Exact,
-    RegularExpression,
-}
-
-/// HTTPQueryParamMatch describes how to select a HTTP route by matching HTTP
-/// query parameters.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-pub struct HttpQueryParamMatch {
-    /// Type specifies how to match against the value of the query parameter.
-    ///
-    /// Support: Extended (Exact)
-    ///
-    /// Support: Custom (RegularExpression)
-    ///
-    /// Since RegularExpression QueryParamMatchType has custom conformance,
-    /// implementations can support POSIX, PCRE or any other dialects of regular
-    /// expressions. Please read the implementation's documentation to determine
-    /// the supported dialect/
-    pub r#type: Option<QueryParamMatchType>,
-
-    /// Name is the name of the HTTP query param to be matched. This must be an
-    /// exact string match. (See
-    /// <https://tools.ietf.org/html/rfc7230#section-2.7.3>).
-    pub name: String,
-
-    /// Value is the value of HTTP query param to be matched.
-    pub value: String,
-}
-
-/// HTTPMethod describes how to select a HTTP route by matching the HTTP
-/// method as defined by
-/// [RFC 7231](https://datatracker.ietf.org/doc/html/rfc7231#section-4) and
-/// [RFC 5789](https://datatracker.ietf.org/doc/html/rfc5789#section-2).
-/// The value is expected in upper case.
-pub type HttpMethod = String;
-
 /// HTTPRouteMatch defines the predicate used to match requests to a given
 /// action. Multiple match types are ANDed together, i.e. the match will
 /// evaluate to true only if all conditions are satisfied.
@@ -347,64 +211,162 @@ pub struct HttpRouteMatch {
     pub method: Option<HttpMethod>,
 }
 
+/// HTTPPathMatch describes how to select a HTTP route by matching the HTTP request path.
+///
+/// The `type` specifies the semantics of how HTTP paths should be compared.
+/// Valid PathMatchType values are:
+///
+/// * "Exact"
+/// * "PathPrefix"
+/// * "RegularExpression"
+///
+/// PathPrefix and Exact paths must be syntactically valid:
+///
+/// - Must begin with the `/` character
+/// - Must not contain consecutive `/` characters (e.g. `/foo///`, `//`)
+#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[serde(tag = "type", rename_all = "PascalCase")]
+pub enum HttpPathMatch {
+    Exact { value: String },
+    PathPrefix { value: String },
+    RegularExpression { value: String },
+}
+
+/// HTTPHeaderName is the name of an HTTP header.
+///
+/// Valid values include:
+///
+/// * "Authorization"
+/// * "Set-Cookie"
+///
+/// Invalid values include:
+///
+/// * ":method" - ":" is an invalid character. This means that HTTP/2 pseudo
+///   headers are not currently supported by this type.
+/// * "/invalid" - "/" is an invalid character
+pub type HttpHeaderName = String;
+
+/// HTTPHeaderMatch describes how to select a HTTP route by matching HTTP
+/// request headers.
+///
+/// `name` is the name of the HTTP Header to be matched. Name matching MUST be
+/// case insensitive. (See <https://tools.ietf.org/html/rfc7230#section-3.2>).
+///
+/// If multiple entries specify equivalent header names, only the first
+/// entry with an equivalent name MUST be considered for a match. Subsequent
+/// entries with an equivalent header name MUST be ignored. Due to the
+/// case-insensitivity of header names, "foo" and "Foo" are considered
+/// equivalent.
+///
+/// When a header is repeated in an HTTP request, it is
+/// implementation-specific behavior as to how this is represented.
+/// Generally, proxies should follow the guidance from the RFC:
+/// <https://www.rfc-editor.org/rfc/rfc7230.html#section-3.2.2> regarding
+/// processing a repeated header, with special handling for "Set-Cookie".
+#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[serde(tag = "type", rename_all = "PascalCase")]
+pub enum HttpHeaderMatch {
+    #[serde(rename_all = "camelCase")]
+    Exact { name: HttpHeaderName, value: String },
+
+    #[serde(rename_all = "camelCase")]
+    RegularExpression {
+        name: HttpHeaderName,
+
+        /// Since RegularExpression HeaderMatchType has custom conformance,
+        /// implementations can support POSIX, PCRE or any other dialects of regular
+        /// expressions. Please read the implementation's documentation to determine
+        /// the supported dialect.
+        value: String,
+    },
+}
+
+/// HTTPQueryParamMatch describes how to select a HTTP route by matching HTTP
+/// query parameters.
+#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[serde(tag = "type", rename_all = "PascalCase")]
+pub enum HttpQueryParamMatch {
+    #[serde(rename_all = "camelCase")]
+    Exact { name: String, value: String },
+
+    #[serde(rename_all = "camelCase")]
+    RegularExpression { name: String, value: String },
+}
+
+/// HTTPMethod describes how to select a HTTP route by matching the HTTP
+/// method as defined by
+/// [RFC 7231](https://datatracker.ietf.org/doc/html/rfc7231#section-4) and
+/// [RFC 5789](https://datatracker.ietf.org/doc/html/rfc5789#section-2).
+/// The value is expected in upper case.
+pub type HttpMethod = String;
+
 /// HTTPRouteFilter defines processing steps that must be completed during the
 /// request or response lifecycle. HTTPRouteFilters are meant as an extension
 /// point to express processing that may be done in Gateway implementations.
 /// Some examples include request or response modification, implementing
 /// authentication strategies, rate-limiting, and traffic shaping. API
 /// guarantee/conformance is defined based on the type of the filter.
+///
+/// Type identifies the type of filter to apply. As with other API fields,
+/// types are classified into three conformance levels:
+///
+/// - Core: Filter types and their corresponding configuration defined by
+///   "Support: Core" in this package, e.g. "RequestHeaderModifier". All
+///   implementations must support core filters.
+///
+/// - Extended: Filter types and their corresponding configuration defined by
+///   "Support: Extended" in this package, e.g. "RequestMirror". Implementers
+///   are encouraged to support extended filters.
+///
+/// - Custom: Filters that are defined and supported by specific vendors.
+///   In the future, filters showing convergence in behavior across multiple
+///   implementations will be considered for inclusion in extended or core
+///   conformance levels. Filter-specific configuration for such filters
+///   is specified using the ExtensionRef field. `Type` should be set to
+///   "ExtensionRef" for custom filters.
+///
+/// Implementers are encouraged to define custom implementation types to
+/// extend the core API with implementation-specific behavior.
+///
+/// If a reference to a custom filter type cannot be resolved, the filter
+/// MUST NOT be skipped. Instead, requests that would have been processed by
+/// that filter MUST receive a HTTP error response.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-#[serde(rename_all = "camelCase")]
-pub struct HttpRouteFilter {
-    /// Type identifies the type of filter to apply. As with other API fields,
-    /// types are classified into three conformance levels:
-    ///
-    /// - Core: Filter types and their corresponding configuration defined by
-    ///   "Support: Core" in this package, e.g. "RequestHeaderModifier". All
-    ///   implementations must support core filters.
-    ///
-    /// - Extended: Filter types and their corresponding configuration defined by
-    ///   "Support: Extended" in this package, e.g. "RequestMirror". Implementers
-    ///   are encouraged to support extended filters.
-    ///
-    /// - Custom: Filters that are defined and supported by specific vendors.
-    ///   In the future, filters showing convergence in behavior across multiple
-    ///   implementations will be considered for inclusion in extended or core
-    ///   conformance levels. Filter-specific configuration for such filters
-    ///   is specified using the ExtensionRef field. `Type` should be set to
-    ///   "ExtensionRef" for custom filters.
-    ///
-    /// Implementers are encouraged to define custom implementation types to
-    /// extend the core API with implementation-specific behavior.
-    ///
-    /// If a reference to a custom filter type cannot be resolved, the filter
-    /// MUST NOT be skipped. Instead, requests that would have been processed by
-    /// that filter MUST receive a HTTP error response.
-    pub r#type: HttpRouteFilterType,
-
+#[serde(tag = "type", rename_all = "PascalCase")]
+pub enum HttpRouteFilter {
     /// RequestHeaderModifier defines a schema for a filter that modifies request
     /// headers.
     ///
     /// Support: Core
-    pub request_header_modifier: Option<HttpRequestHeaderFilter>,
+    #[serde(rename_all = "camelCase")]
+    RequestHeaderModifier {
+        request_header_modifier: HttpRequestHeaderFilter,
+    },
 
     /// RequestMirror defines a schema for a filter that mirrors requests.
     /// Requests are sent to the specified destination, but responses from
     /// that destination are ignored.
     ///
     /// Support: Extended
-    pub request_mirror: Option<HttpRequestMirrorFilter>,
+    #[serde(rename_all = "camelCase")]
+    RequestMirror {
+        request_mirror: HttpRequestMirrorFilter,
+    },
 
     /// RequestRedirect defines a schema for a filter that responds to the
     /// request with an HTTP redirection.
     ///
     /// Support: Core
-    pub request_redirect: Option<HttpRequestRedirectFilter>,
+    #[serde(rename_all = "camelCase")]
+    RequestRedirect {
+        request_redirect: HttpRequestRedirectFilter,
+    },
 
     /// URLRewrite defines a schema for a filter that modifies a request during forwarding.
     ///
     /// Support: Extended
-    pub url_rewrite: Option<HttpUrlRewriteFilter>,
+    #[serde(rename_all = "camelCase")]
+    URLRewrite { url_rewrite: HttpUrlRewriteFilter },
 
     /// ExtensionRef is an optional, implementation-specific extension to the
     /// "filter" behavior.  For example, resource "myroutefilter" in group
@@ -412,27 +374,8 @@ pub struct HttpRouteFilter {
     /// extended filters.
     ///
     /// Support: Implementation-specific
-    pub extension_ref: Option<LocalObjectReference>,
-}
-
-/// HTTPRouteFilterType identifies a type of HTTPRoute filter.
-pub type HttpRouteFilterType = String;
-
-/// HTTPHeader represents an HTTP Header name and value as defined by RFC 7230.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-pub struct HttpHeader {
-    /// Name is the name of the HTTP Header to be matched. Name matching MUST be
-    /// case insensitive. (See <https://tools.ietf.org/html/rfc7230#section-3.2>).
-    ///
-    /// If multiple entries specify equivalent header names, the first entry with
-    /// an equivalent name MUST be considered for a match. Subsequent entries
-    /// with an equivalent header name MUST be ignored. Due to the
-    /// case-insensitivity of header names, "foo" and "Foo" are considered
-    /// equivalent.
-    pub name: HttpHeaderName,
-
-    /// Value is the value of HTTP Header to be matched.
-    pub value: String,
+    #[serde(rename_all = "camelCase")]
+    ExtensionRef { extension_ref: LocalObjectReference },
 }
 
 /// HTTPRequestHeaderFilter defines configuration for the RequestHeaderModifier
@@ -495,27 +438,39 @@ pub struct HttpRequestHeaderFilter {
     pub remove: Option<Vec<String>>,
 }
 
-/// HTTPPathModifierType defines the type of path redirect or rewrite.
-pub type HttpPathModifierType = String;
+/// HTTPHeader represents an HTTP Header name and value as defined by RFC 7230.
+#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+pub struct HttpHeader {
+    /// Name is the name of the HTTP Header to be matched. Name matching MUST be
+    /// case insensitive. (See <https://tools.ietf.org/html/rfc7230#section-3.2>).
+    ///
+    /// If multiple entries specify equivalent header names, the first entry with
+    /// an equivalent name MUST be considered for a match. Subsequent entries
+    /// with an equivalent header name MUST be ignored. Due to the
+    /// case-insensitivity of header names, "foo" and "Foo" are considered
+    /// equivalent.
+    pub name: HttpHeaderName,
+
+    /// Value is the value of HTTP Header to be matched.
+    pub value: String,
+}
 
 /// HTTPPathModifier defines configuration for path modifiers.
 ///
 // gateway:experimental
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-#[serde(rename_all = "camelCase")]
-pub struct HttpPathModifier {
-    /// Type defines the type of path modifier. Additional types may be
-    /// added in a future release of the API.
-    pub r#type: HttpPathModifierType,
-
+#[serde(tag = "type", rename_all = "PascalCase")]
+pub enum HttpPathModifier {
     /// ReplaceFullPath specifies the value with which to replace the full path
     /// of a request during a rewrite or redirect.
-    pub replace_full_path: Option<String>,
+    #[serde(rename_all = "camelCase")]
+    ReplaceFullPath(String),
 
     /// ReplacePrefixMatch specifies the value with which to replace the prefix
     /// match of a request during a rewrite or redirect. For example, a request
     /// to "/foo/bar" with a prefix match of "/foo" would be modified to "/bar".
-    pub replace_prefix_match: Option<String>,
+    #[serde(rename_all = "camelCase")]
+    ReplacePrefixMatch(String),
 }
 
 /// HTTPRequestRedirect defines a filter that redirects a request. This filter

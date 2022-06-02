@@ -6,7 +6,8 @@ use super::*;
 #[kube(
     group = "gateway.networking.k8s.io",
     version = "v1alpha2",
-    kind = "UdpRoute",
+    kind = "UDPRoute",
+    struct = "UdpRoute",
     status = "UdpRouteStatus",
     namespaced
 )]

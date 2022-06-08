@@ -76,7 +76,7 @@ jobs:
           repository: kubernetes-sigs/gateway-api
           ref: v0.4.3
           path: gateway-api
-      - run: kubectl apply -f gateway-api/config/crd/v1alpha2/*.yaml
+      - run: kubectl apply -f gateway-api/config/crd/v1alpha2/
       # Setup just
       - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
       - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748

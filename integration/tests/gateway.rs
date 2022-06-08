@@ -30,14 +30,11 @@ async fn round_trip() {
                     }]),
                 }),
                 tls: Some(GatewayTlsConfig {
-                    mode: None,
-                    options: None,
                     certificate_refs: Some(vec![SecretObjectReference {
-                        group: None,
-                        kind: None,
                         name: "admin-controlled-cert".to_string(),
-                        namespace: None,
+                        ..SecretObjectReference::default()
                     }]),
+                    ..GatewayTlsConfig::default()
                 }),
                 name: "https".to_string(),
                 hostname: None,

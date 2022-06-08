@@ -94,7 +94,7 @@ pub struct Listener {
     /// Gateway.
     ///
     /// Support: Core
-    pub section_name: String,
+    pub name: String,
 
     /// Hostname specifies the virtual hostname to match for protocol types that
     /// define this concept. When unspecified, all hostnames are matched. This
@@ -196,7 +196,9 @@ pub struct Listener {
 pub type ProtocolType = String;
 
 /// GatewayTLSConfig describes a TLS configuration.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(rename_all = "camelCase")]
 pub struct GatewayTlsConfig {
     /// Mode defines the TLS behavior for the TLS session initiated by the
@@ -239,7 +241,7 @@ pub struct GatewayTlsConfig {
     ///
     /// Support: Implementation-specific (More than one reference or other
     /// resource types)
-    pub certifcate_refs: Option<Vec<SecretObjectReference>>,
+    pub certificate_refs: Option<Vec<SecretObjectReference>>,
 
     /// Options are a list of key/value pairs to enable extended TLS
     /// configuration for each implementation. For example, configuring the

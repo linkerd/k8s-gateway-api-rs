@@ -1,0 +1,21 @@
+[package]
+name = "integration"
+version = "0.4.0"
+edition = "2021"
+license = "Apache-2.0"
+publish = false
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt"] }
+tracing = "0.1"
+k8s-gateway-api = { path = ".." }
+
+[dev-dependencies.kube]
+version = "0.73"
+default-features = false
+features = [
+    "client",
+    "openssl-tls",
+    "runtime",
+    "ws",
+]

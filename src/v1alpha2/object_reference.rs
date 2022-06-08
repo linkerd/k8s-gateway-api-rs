@@ -30,7 +30,9 @@ pub struct LocalObjectReference {
 /// References to objects with invalid Group and Kind are not valid, and must
 /// be rejected by the implementation, with appropriate Conditions set
 /// on the containing object.
-#[derive(Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 pub struct SecretObjectReference {
     /// Group is the group of the referent. For example, "networking.k8s.io".
     /// When unspecified (empty string), core API group is inferred.

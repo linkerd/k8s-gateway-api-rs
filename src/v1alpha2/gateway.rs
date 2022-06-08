@@ -196,7 +196,9 @@ pub struct Listener {
 pub type ProtocolType = String;
 
 /// GatewayTLSConfig describes a TLS configuration.
-#[derive(Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(rename_all = "camelCase")]
 pub struct GatewayTlsConfig {
     /// Mode defines the TLS behavior for the TLS session initiated by the

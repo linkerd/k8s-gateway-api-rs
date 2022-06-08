@@ -70,6 +70,8 @@ jobs:
       - run: k3d --version
       - run: k3d cluster create --no-lb --k3s-arg '--no-deploy=local-storage,traefik,servicelb,metrics-server@server:*'
       - run: kubectl version
+      # Install CRDs
+      - run: kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v0.4.3/config/crd/v1alpha2/gateway.networking.k8s.io_gateways.yaml
       # Setup just
       - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
       - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748

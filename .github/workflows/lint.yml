@@ -63,7 +63,6 @@ jobs:
       - run: curl --proto =https --tlsv1.3 -fLsSv https://raw.githubusercontent.com/k3d-io/k3d/${K3D_VERSION}/install.sh | bash
       - run: k3d --version
       - run: k3d cluster create --no-lb --k3s-arg '--no-deploy=local-storage,traefik,servicelb,metrics-server@server:*'
-      - run: kubectl version
       # Setup just
       - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
       - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748

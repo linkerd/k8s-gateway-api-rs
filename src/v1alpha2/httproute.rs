@@ -5,7 +5,13 @@ use super::*;
 /// Filters can be used to specify additional processing steps. Backends specify
 /// where matching requests should be routed.
 #[derive(
-    Clone, Debug, Default, kube::CustomResource, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+    Clone,
+    Debug,
+    Default,
+    kube::CustomResource,
+    serde::Deserialize,
+    serde::Serialize,
+    schemars::JsonSchema,
 )]
 #[kube(
     group = "gateway.networking.k8s.io",
@@ -185,7 +191,9 @@ pub struct HttpRouteRule {
 ///   - name: "version"
 ///     value "v1"
 /// ```
-#[derive(Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(rename_all = "camelCase")]
 pub struct HttpRouteMatch {
     /// Path specifies a HTTP request path matcher. If this field is not

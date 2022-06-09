@@ -84,7 +84,9 @@ pub struct ParentReference {
 
 /// CommonRouteSpec defines the common attributes that all Routes MUST include
 /// within their spec.
-#[derive(Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonRouteSpec {
     /// ParentRefs references the resources (usually Gateways) that a Route

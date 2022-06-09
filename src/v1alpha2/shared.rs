@@ -84,7 +84,7 @@ pub struct ParentReference {
 
 /// CommonRouteSpec defines the common attributes that all Routes MUST include
 /// within their spec.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonRouteSpec {
     /// ParentRefs references the resources (usually Gateways) that a Route
@@ -134,6 +134,10 @@ pub struct BackendRef {
     ///
     /// Support for this field varies based on the context where used.
     pub weight: Option<u16>,
+
+    pub name: String,
+
+    pub port: PortNumber,
 }
 
 /// RouteConditionType is a type of condition for a route.

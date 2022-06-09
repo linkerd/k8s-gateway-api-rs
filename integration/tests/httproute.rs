@@ -11,31 +11,6 @@ async fn round_trip() {
         .await
         .expect("failed to initialize k8s client");
     let api = kube::Api::<HttpRoute>::default_namespaced(client);
-    // kind: HTTPRoute
-    // apiVersion: networking.x-k8s.io/v1alpha1
-    // metadata:
-    //   name: bar-route
-    //   namespace: bar
-    //   labels:
-    //     gateway: external-https-prod
-    // spec:
-    //   hostnames:
-    //   - "bar.example.com"
-    //   rules:
-    //   - forwardTo:
-    //     - serviceName: bar-v1
-    //       port: 8080
-    //       weight: 90
-    //     - serviceName: bar-v2
-    //       port: 8080
-    //       weight: 10
-    //   - matches:
-    //     - headers:
-    //         values:
-    //           env: canary
-    //     forwardTo:
-    //     - serviceName: bar-v2
-    //       port: 8080
 
     let route = HttpRoute {
         metadata: ObjectMeta {

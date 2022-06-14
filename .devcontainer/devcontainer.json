@@ -2,6 +2,7 @@
 	"name": "k8s-gateway-api.dev",
 	"image": "ghcr.io/linkerd/dev-proxy:v11",
 	"extensions": [
+		"DavidAnson.vscode-markdownlint",
 		"NathanRidley.autotrim",
 		"rust-lang.rust-analyzer",
 		"skellock.just",

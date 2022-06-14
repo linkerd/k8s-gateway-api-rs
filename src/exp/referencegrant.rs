@@ -1,26 +1,24 @@
-use super::*;
+use crate::*;
 
-/// ReferencePolicy identifies kinds of resources in other namespaces that are
+/// ReferenceGrant identifies kinds of resources in other namespaces that are
 /// trusted to reference the specified kinds of resources in the same namespace
 /// as the policy.
 ///
-/// Each ReferencePolicy can be used to represent a unique trust relationship.
+/// Each ReferenceGrant can be used to represent a unique trust relationship.
 /// Additional Reference Policies can be used to add to the set of trusted
 /// sources of inbound references for the namespace they are defined within.
 ///
-/// All cross-namespace references in Gateway API (with the exception of cross-namespace
-/// Gateway-route attachment) require a ReferencePolicy.
-///
-/// Support: Core
+/// All cross-namespace references in Gateway API (with the exception of
+/// cross-namespace Gateway-route attachment) require a ReferenceGrant.
 #[derive(Clone, Debug, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-pub struct ReferencePolicy {
+pub struct ReferenceGrant {
     /// From describes the trusted namespaces and kinds that can reference the
     /// resources described in "To". Each entry in this list must be considered
     /// to be an additional place that references can be valid from, or to put
     /// this another way, entries must be combined using OR.
     ///
-    /// Support: Cor
-    pub from: Vec<ReferencePolicyFrom>,
+    /// Support: Core
+    pub from: Vec<ReferenceGrantFrom>,
 
     /// To describes the resources that may be referenced by the resources
     /// described in "From". Each entry in this list must be considered to be an
@@ -28,12 +26,12 @@ pub struct ReferencePolicy {
     /// way, entries must be combined using OR.
     ///
     /// Support: Core
-    pub to: Vec<ReferencePolicyFrom>,
+    pub to: Vec<ReferenceGrantFrom>,
 }
 
-/// ReferencePolicyFrom describes trusted namespaces and kinds.
+/// ReferenceGrantFrom describes trusted namespaces and kinds.
 #[derive(Clone, Debug, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-pub struct ReferencePolicyFrom {
+pub struct ReferenceGrantFrom {
     /// Group is the group of the referent.
     ///
     /// When empty, the Kubernetes core API group is inferred.
@@ -57,10 +55,10 @@ pub struct ReferencePolicyFrom {
     pub namespace: Namespace,
 }
 
-/// ReferencePolicyTo describes what Kinds are allowed as targets of the
+/// ReferenceGrantTo describes what Kinds are allowed as targets of the
 /// references.
 #[derive(Clone, Debug, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-pub struct ReferencePolicyTo {
+pub struct ReferenceGrantTo {
     /// Group is the group of the referent.
     /// When empty, the Kubernetes core API group is inferred.
     ///

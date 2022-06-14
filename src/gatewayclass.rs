@@ -1,4 +1,5 @@
-use super::*;
+use crate::*;
+use k8s_openapi::apimachinery::pkg::apis::meta::v1 as metav1;
 
 // GatewayClass describes a class of Gateways available to the user for creating
 // Gateway resources.
@@ -22,7 +23,7 @@ use super::*;
 )]
 #[kube(
     group = "gateway.networking.k8s.io",
-    version = "v1alpha2",
+    version = "v1beta1",
     kind = "GatewayClass",
     status = "GatewayClassStatus"
 )]

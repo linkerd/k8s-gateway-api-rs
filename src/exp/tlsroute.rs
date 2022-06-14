@@ -1,4 +1,4 @@
-use super::*;
+use crate::*;
 
 /// The TLSRoute resource is similar to TCPRoute, but can be configured to match
 /// against TLS-specific metadata. This allows more flexibility in matching
@@ -78,7 +78,7 @@ pub struct TlsRouteRule {
     /// Service with no endpoints), the rule performs no forwarding; if no
     /// filters are specified that would result in a response being sent, the
     /// underlying implementation must actively reject request attempts to this
-    /// backend, by rejecting the connection or returning a 404 status code.
+    /// backend, by rejecting the connection or returning a 500 status code.
     /// Request rejections must respect weight; if an invalid backend is
     /// requested to have 80% of requests, then 80% of requests must be rejected
     /// instead.

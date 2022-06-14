@@ -15,7 +15,6 @@ env:
   CARGO_NET_RETRY: 10
   RUSTUP_MAX_RETRIES: 10
   RUST_VERSION: 1.60.0
-  K3D_VERSION: v5.4.1
 
 jobs:
   fmt:
@@ -41,6 +40,8 @@ jobs:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - run: just fetch
       - run: just clippy
+      - run: just clippy --all-features
+      - run: just clippy --package=integration
 
   docs:
     timeout-minutes: 10
@@ -53,36 +54,3 @@ jobs:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - run: just fetch
       - run: just docs
-
-  test:
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install rust
-        run: |
-          rm -rf $HOME/.cargo
-          curl --proto =https --tlsv1.3 -fLsSv https://sh.rustup.rs | sh -s -- -y --default-toolchain "${RUST_VERSION}"
-          source $HOME/.cargo/env
-          echo "PATH=$PATH" >> $GITHUB_ENV
-          cargo version
-      # Setup a cluster
-      - run: curl --proto =https --tlsv1.3 -fLsSv https://raw.githubusercontent.com/k3d-io/k3d/${K3D_VERSION}/install.sh | bash
-      - run: k3d --version
-      - run: k3d cluster create --no-lb --k3s-arg '--no-deploy=local-storage,traefik,servicelb,metrics-server@server:*'
-      - run: kubectl version
-      # Install CRDs
-      - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
-        with:
-          repository: kubernetes-sigs/gateway-api
-          ref: v0.4.3
-          path: gateway-api
-      - run: kubectl apply -f gateway-api/config/crd/v1alpha2/
-      # Setup just
-      - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
-      - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
-      # Run tests
-      - run: just fetch
-      - run: just test-build
-      - run: just test
-
-

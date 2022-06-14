@@ -1,4 +1,4 @@
-use super::*;
+use crate::*;
 
 /// TCPRoute provides a way to route TCP requests. When combined with a Gateway
 /// listener, it can be used to forward connections on the port specified by the

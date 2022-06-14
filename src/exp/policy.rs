@@ -1,4 +1,4 @@
-use super::*;
+use crate::*;
 
 /// PolicyTargetReference identifies an API object to apply policy to. This
 /// should be used as part of Policy resources that can target Gateway API

@@ -1,0 +1,56 @@
+name: integration
+
+on:
+  pull_request:
+    paths:
+      - Cargo.toml
+      - '**/*.rs'
+      - .github/workflows/integration.yml
+
+permissions:
+  contents: read
+
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
+  RUST_VERSION: 1.60.0
+  K3D_VERSION: v5.4.1
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        k8s:
+          - v1.21
+          - v1.23
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install rust
+        run: |
+          rm -rf $HOME/.cargo
+          curl --proto =https --tlsv1.3 -fLsSv https://sh.rustup.rs | sh -s -- -y --default-toolchain "${RUST_VERSION}"
+          source $HOME/.cargo/env
+          echo "PATH=$PATH" >> $GITHUB_ENV
+          cargo version
+      # Setup a cluster
+      - run: curl --proto =https --tlsv1.3 -fLsSv https://raw.githubusercontent.com/k3d-io/k3d/${K3D_VERSION}/install.sh | bash
+      - run: k3d --version
+      - run: k3d cluster create --no-lb --k3s-arg '--no-deploy=local-storage,traefik,servicelb,metrics-server@server:*' --image +${{ matrix.k8s }}
+      - run: kubectl version
+      # Install CRDs
+      - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
+        with:
+          repository: kubernetes-sigs/gateway-api
+          ref: 3f4b981dd6669f67398d753a6f278b241d669953 # 0.5.0-dev
+          path: gateway-api
+      - run: kubectl apply -k gateway-api/config/crd/experimental/
+      # Setup just
+      - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
+      - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
+      # Run tests
+      - run: just fetch
+      - run: just test-build --package=integration
+      - run: just test --package=integration
+

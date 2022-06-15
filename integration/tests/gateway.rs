@@ -1,4 +1,4 @@
-use k8s_gateway_api::v1alpha2::{
+use k8s_gateway_api::{
     AllowedRoutes, Gateway, GatewaySpec, GatewayTlsConfig, Listener, RouteGroupKind,
     SecretObjectReference,
 };

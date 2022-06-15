@@ -1,4 +1,4 @@
-use super::*;
+use k8s_openapi::apimachinery::pkg::apis::meta::v1 as metav1;
 
 /// ParentReference identifies an API object (usually a Gateway) that can be considered
 /// a parent of this resource (usually a route). The only kind of parent resource

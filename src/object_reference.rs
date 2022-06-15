@@ -1,4 +1,4 @@
-use super::*;
+use crate::*;
 
 /// LocalObjectReference identifies an API object within the namespace of the
 /// referrer.

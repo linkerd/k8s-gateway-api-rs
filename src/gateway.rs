@@ -1,4 +1,5 @@
-use super::*;
+use crate::*;
+use k8s_openapi::apimachinery::pkg::apis::meta::v1 as metav1;
 use std::collections::BTreeMap;
 
 /// Gateway represents an instance of a service-traffic handling infrastructure
@@ -8,7 +9,7 @@ use std::collections::BTreeMap;
 )]
 #[kube(
     group = "gateway.networking.k8s.io",
-    version = "v1alpha2",
+    version = "v1beta1",
     kind = "Gateway",
     status = "GatewayStatus",
     namespaced
@@ -49,7 +50,7 @@ pub struct GatewaySpec {
     /// provided in the incoming client request MUST be matched to a Listener to
     /// find the correct set of Routes.  The incoming hostname MUST be matched
     /// using the Hostname field for each Listener in order of most to least
-    /// specific.  That is, exact matches must be processed before wildcard
+    /// specific. That is, exact matches must be processed before wildcard
     /// matches.
     ///
     /// If this field specifies multiple Listeners that have the same Port value

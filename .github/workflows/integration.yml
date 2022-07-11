@@ -23,7 +23,7 @@ jobs:
       matrix:
         k8s:
           - v1.21
-          - v1.23
+          - v1.24
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
         with:
           repository: kubernetes-sigs/gateway-api
-          ref: 3f4b981dd6669f67398d753a6f278b241d669953 # 0.5.0-dev
+          ref: 4f86f0bd65173b04dadb558f63fbbd53330736d2 # 0.5.0-rc1
           path: gateway-api
       - run: kubectl apply -k gateway-api/config/crd/experimental/
       # Setup just

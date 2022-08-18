@@ -24,7 +24,9 @@ pub struct UdpRouteStatus {
     pub inner: RouteStatus,
 }
 
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(rename_all = "camelCase")]
 pub struct UdpRouteRule {
     pub backend_refs: Vec<BackendRef>,

@@ -5,7 +5,9 @@ use crate::*;
 /// resources. For more information on how this policy attachment model works,
 /// and a sample Policy resource, refer to the policy attachment documentation
 /// for Gateway API.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 pub struct PolicyTargetReference {
     /// Group is the group of the target resource.
     pub group: Group,

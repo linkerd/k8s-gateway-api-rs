@@ -26,6 +26,4 @@ jobs:
       - run: just fetch
       - run: just check-fmt
       - run: just clippy
-      - run: just clippy --all-features
-      - run: just clippy --package=integration
       - run: just docs

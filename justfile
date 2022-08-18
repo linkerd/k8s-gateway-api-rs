@@ -29,11 +29,8 @@ fetch:
 check-fmt:
     {{ cargo }} fmt -- --check
 
-check *flags:
-    {{ cargo }} clippy --frozen --all-targets {{ flags }} {{ _fmt }}
-
-clippy *flags:
-    {{ cargo }} clippy --frozen --all-targets {{ flags }} {{ _fmt }}
+clippy:
+    {{ cargo }} clippy --frozen --workspace --all-targets --all-features {{ _fmt }}
 
 deny:
     {{ cargo }} deny --all-features check

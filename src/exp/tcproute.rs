@@ -32,7 +32,9 @@ pub struct TcpRouteStatus {
 }
 
 /// TCPRouteRule is the configuration for a given rule.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(rename_all = "camelCase")]
 pub struct TcpRouteRule {
     /// BackendRefs defines the backend(s) where matching requests should be

@@ -14,8 +14,8 @@ env:
   CARGO_INCREMENTAL: 0
   CARGO_NET_RETRY: 10
   RUSTUP_MAX_RETRIES: 10
-  RUST_VERSION: 1.60.0
-  K3D_VERSION: v5.4.1
+  RUST_VERSION: 1.63.0
+  K3D_VERSION: v5.4.4
 
 jobs:
   test:
@@ -29,13 +29,13 @@ jobs:
     steps:
       - name: Install rust
         run: |
-          rm -rf $HOME/.cargo
+          rm -rf "$HOME/.cargo"
           curl --proto =https --tlsv1.3 -fLsSv https://sh.rustup.rs | sh -s -- -y --default-toolchain "${RUST_VERSION}"
-          source $HOME/.cargo/env
-          echo "PATH=$PATH" >> $GITHUB_ENV
+          source "$HOME/.cargo/env"
+          echo "PATH=$PATH" >> "$GITHUB_ENV"
           cargo version
       # Setup a cluster
-      - run: curl --proto =https --tlsv1.3 -fLsSv https://raw.githubusercontent.com/k3d-io/k3d/${K3D_VERSION}/install.sh | bash
+      - run: curl --proto =https --tlsv1.3 -fLsSv "https://raw.githubusercontent.com/k3d-io/k3d/${K3D_VERSION}/install.sh" | bash
       - run: k3d --version
       - run: k3d cluster create --no-lb --k3s-arg '--no-deploy=local-storage,traefik,servicelb,metrics-server@server:*' --image +${{ matrix.k8s }}
       - run: kubectl version

@@ -198,7 +198,7 @@ pub type ProtocolType = String;
 
 /// GatewayTLSConfig describes a TLS configuration.
 #[derive(
-    Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+    Clone, Debug, Default, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
 )]
 #[serde(rename_all = "camelCase")]
 pub struct GatewayTlsConfig {
@@ -311,7 +311,9 @@ pub struct RouteNamespaces {
 }
 
 /// RouteGroupKind indicates the group and kind of a Route resource.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 pub struct RouteGroupKind {
     /// Group is the group of the Route.
     pub group: Option<String>,
@@ -321,7 +323,9 @@ pub struct RouteGroupKind {
 }
 
 /// GatewayAddress describes an address that can be bound to a Gateway.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 pub struct GatewayAddress {
     /// Type of the address.
     pub r#type: Option<AddressType>,

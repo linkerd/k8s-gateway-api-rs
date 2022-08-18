@@ -20,8 +20,6 @@ jobs:
   meta:
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    container:
-      image: docker://rust:1.60
     steps:
       - id: meta
         shell: bash
@@ -41,10 +39,8 @@ jobs:
   test:
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    container:
-      image: docker://rust:1.60
+    container: docker://ghcr.io/linkerd/dev:v29-rust
     steps:
-      - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - run: just fetch
       - run: just test-build
@@ -57,17 +53,17 @@ jobs:
       contents: write
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    container: docker://ghcr.io/linkerd/dev:v29-rust
     steps:
       - if: needs.meta.outputs.publish
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - if: needs.meta.outputs.publish
         shell: bash
         run: |
-          curl --proto '=https' --tlsv1.3 -fsSL https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o $HOME/jq
-          chmod 755 $HOME/jq
-          version=$(cargo metadata --format-version=1 | $HOME/jq -r '.packages[] | select(.name == "k8s-gateway-api") | .version')
-          if [[ "v${version}" != "${{ needs.meta.outputs.version }}" ]]; then
-            echo "::error ::Crate version v${version} does not match tag ${{ needs.meta.outputs.version }}"
+          version=$(cargo metadata --format-version=1 | jq -r '.packages[] | select(.name == "k8s-gateway-api") | .version')
+          tag="${{ needs.meta.outputs.version }}"
+          if [[ "v${version}" != "$tag" ]]; then
+            echo "::error ::Crate version v${version} does not match tag ${tag}"
             exit 1
           fi
       - if: needs.meta.outputs.publish
@@ -81,10 +77,8 @@ jobs:
     needs: [meta, release]
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    container:
-      image: docker://rust:1.60.0-bullseye
+    container: docker://ghcr.io/linkerd/dev:v29-rust
     steps:
-      - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - run: just publish --dry-run
       - if: needs.meta.outputs.publish

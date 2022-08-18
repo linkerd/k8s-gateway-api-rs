@@ -58,7 +58,9 @@ pub struct GatewayClassSpec {
 
 /// ParametersReference identifies an API object containing controller-specific
 /// configuration resource within the cluster.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 pub struct ParametersReference {
     /// Group is the group of the referent.
     pub group: Group,

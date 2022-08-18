@@ -7,7 +7,9 @@ use k8s_openapi::apimachinery::pkg::apis::meta::v1 as metav1;
 ///
 /// The API object must be valid in the cluster; the Group and Kind must
 /// be registered in the cluster for this reference to be valid.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(rename_all = "camelCase")]
 pub struct ParentReference {
     /// Group is the group of the referent.
@@ -85,7 +87,7 @@ pub struct ParentReference {
 /// CommonRouteSpec defines the common attributes that all Routes MUST include
 /// within their spec.
 #[derive(
-    Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+    Clone, Debug, Default, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
 )]
 #[serde(rename_all = "camelCase")]
 pub struct CommonRouteSpec {
@@ -120,7 +122,9 @@ pub type PortNumber = u16;
 /// Note that when a namespace is specified, a ReferencePolicy object is
 /// required in the referent namespace to allow that namespace's owner to accept
 /// the reference. See the ReferencePolicy documentation for details.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 pub struct BackendRef {
     /// Weight specifies the proportion of requests forwarded to the referenced
     /// backend. This is computed as weight/(sum of all weights in this

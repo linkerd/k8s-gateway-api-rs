@@ -68,7 +68,9 @@ pub struct HttpRouteSpec {
 /// HTTPRouteRule defines semantics for matching an HTTP request based on
 /// conditions (matches), processing it (filters), and forwarding the request to
 /// an API object (backendRefs).
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(rename_all = "camelCase")]
 pub struct HttpRouteRule {
     /// Matches define conditions used for matching the rule against incoming
@@ -192,7 +194,7 @@ pub struct HttpRouteRule {
 ///     value "v1"
 /// ```
 #[derive(
-    Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+    Clone, Debug, Default, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
 )]
 #[serde(rename_all = "camelCase")]
 pub struct HttpRouteMatch {
@@ -232,7 +234,9 @@ pub struct HttpRouteMatch {
 ///
 /// - Must begin with the `/` character
 /// - Must not contain consecutive `/` characters (e.g. `/foo///`, `//`)
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(tag = "type", rename_all = "PascalCase")]
 pub enum HttpPathMatch {
     Exact { value: String },
@@ -271,7 +275,9 @@ pub type HttpHeaderName = String;
 /// Generally, proxies should follow the guidance from the RFC:
 /// <https://www.rfc-editor.org/rfc/rfc7230.html#section-3.2.2> regarding
 /// processing a repeated header, with special handling for "Set-Cookie".
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(tag = "type", rename_all = "PascalCase")]
 pub enum HttpHeaderMatch {
     #[serde(rename_all = "camelCase")]
@@ -291,7 +297,9 @@ pub enum HttpHeaderMatch {
 
 /// HTTPQueryParamMatch describes how to select a HTTP route by matching HTTP
 /// query parameters.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(tag = "type", rename_all = "PascalCase")]
 pub enum HttpQueryParamMatch {
     #[serde(rename_all = "camelCase")]
@@ -339,7 +347,9 @@ pub type HttpMethod = String;
 /// If a reference to a custom filter type cannot be resolved, the filter
 /// MUST NOT be skipped. Instead, requests that would have been processed by
 /// that filter MUST receive a HTTP error response.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(tag = "type", rename_all = "PascalCase")]
 pub enum HttpRouteFilter {
     /// RequestHeaderModifier defines a schema for a filter that modifies request
@@ -388,7 +398,9 @@ pub enum HttpRouteFilter {
 
 /// HTTPRequestHeaderFilter defines configuration for the RequestHeaderModifier
 /// filter.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 pub struct HttpRequestHeaderFilter {
     /// Set overwrites the request with the given header (name, value)
     /// before the action.
@@ -447,7 +459,9 @@ pub struct HttpRequestHeaderFilter {
 }
 
 /// HTTPHeader represents an HTTP Header name and value as defined by RFC 7230.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 pub struct HttpHeader {
     /// Name is the name of the HTTP Header to be matched. Name matching MUST be
     /// case insensitive. (See <https://tools.ietf.org/html/rfc7230#section-3.2>).
@@ -466,7 +480,9 @@ pub struct HttpHeader {
 /// HTTPPathModifier defines configuration for path modifiers.
 ///
 // gateway:experimental
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(tag = "type", rename_all = "PascalCase")]
 pub enum HttpPathModifier {
     /// ReplaceFullPath specifies the value with which to replace the full path
@@ -483,7 +499,9 @@ pub enum HttpPathModifier {
 
 /// HTTPRequestRedirect defines a filter that redirects a request. This filter
 /// MUST not be used on the same Route rule as a HTTPURLRewrite filter.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(rename_all = "camelCase")]
 pub struct HttpRequestRedirectFilter {
     /// Scheme is the scheme to be used in the value of the `Location`
@@ -527,7 +545,9 @@ pub struct HttpRequestRedirectFilter {
 ///
 /// gateway:experimental
 /// Support: Extended
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 pub struct HttpUrlRewriteFilter {
     /// Hostname is the value to be used to replace the Host header value during
     /// forwarding.
@@ -542,7 +562,9 @@ pub struct HttpUrlRewriteFilter {
 }
 
 /// HTTPRequestMirrorFilter defines configuration for the RequestMirror filter.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(rename_all = "camelCase")]
 pub struct HttpRequestMirrorFilter {
     /// BackendRef references a resource where mirrored requests are sent.
@@ -567,7 +589,9 @@ pub struct HttpRequestMirrorFilter {
 }
 
 /// HTTPBackendRef defines how a HTTPRoute should forward an HTTP request.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 #[serde(rename_all = "camelCase")]
 pub struct HttpBackendRef {
     /// BackendRef is a reference to a backend to forward matched requests to.

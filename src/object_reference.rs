@@ -8,7 +8,9 @@ use crate::*;
 /// References to objects with invalid Group and Kind are not valid, and must
 /// be rejected by the implementation, with appropriate Conditions set
 /// on the containing object.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 pub struct LocalObjectReference {
     /// Group is the group of the referent. For example, "networking.k8s.io".
     /// When unspecified (empty string), core API group is inferred.
@@ -31,7 +33,7 @@ pub struct LocalObjectReference {
 /// be rejected by the implementation, with appropriate Conditions set
 /// on the containing object.
 #[derive(
-    Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+    Clone, Debug, Default, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
 )]
 pub struct SecretObjectReference {
     /// Group is the group of the referent. For example, "networking.k8s.io".
@@ -71,7 +73,9 @@ pub struct SecretObjectReference {
 /// References to objects with invalid Group and Kind are not valid, and must
 /// be rejected by the implementation, with appropriate Conditions set
 /// on the containing object.
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
 pub struct BackendObjectReference {
     /// Group is the group of the referent. For example, "networking.k8s.io".
     /// When unspecified (empty string), core API group is inferred.

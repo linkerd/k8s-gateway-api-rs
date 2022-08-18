@@ -6,7 +6,7 @@ Based on [gateway-api-v0.5.0-rc1].
 
 [![Crates.io][crate-badge]][crate-url]
 [![Documentation][docs-badge]][docs-url]
-[![License][lic-badge]](LICENSE)
+[![License](https://img.shields.io/crates/l/k8s-gateway-api)](LICENSE)
 
 ## Status
 
@@ -26,5 +26,3 @@ the *v1alpha2* types when the `experimental` feature is enabled.
 [crate-url]: https://crates.io/crates/k8s-gateway-api
 [docs-badge]: https://docs.rs/k8s-gateway-api/badge.svg
 [docs-url]: https://docs.rs/k8s-gateway-api
-[docs-url]: https://img.shields.io/crates/l/k8s-gateway-api
-[lic-badge]: https://img.shields.io/crates/l/k8s-gateway-api

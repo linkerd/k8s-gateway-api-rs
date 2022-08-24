@@ -1,6 +1,6 @@
 {
 	"name": "k8s-gateway-api",
-	"image": "ghcr.io/linkerd/dev:v29",
+	"image": "ghcr.io/linkerd/dev:v30",
 	"extensions": [
 		"DavidAnson.vscode-markdownlint",
 		"NathanRidley.autotrim",

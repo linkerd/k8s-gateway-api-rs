@@ -12,7 +12,7 @@ tracing = "0.1"
 k8s-gateway-api = { path = ".." }
 
 [dev-dependencies.kube]
-version = "0.74"
+version = "0.75"
 default-features = false
 features = [
     "client",

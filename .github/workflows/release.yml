@@ -39,7 +39,7 @@ jobs:
   test:
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    container: docker://ghcr.io/linkerd/dev:v30-rust
+    container: docker://ghcr.io/linkerd/dev:v32-rust
     steps:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - run: just fetch
@@ -53,7 +53,7 @@ jobs:
       contents: write
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    container: docker://ghcr.io/linkerd/dev:v30-rust
+    container: docker://ghcr.io/linkerd/dev:v32-rust
     steps:
       - if: needs.meta.outputs.publish
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
@@ -77,7 +77,7 @@ jobs:
     needs: [meta, release]
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    container: docker://ghcr.io/linkerd/dev:v30-rust
+    container: docker://ghcr.io/linkerd/dev:v32-rust
     steps:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - run: just publish --dry-run

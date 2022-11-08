@@ -40,7 +40,7 @@ jobs:
       - run: k3d cluster create --no-lb --k3s-arg '--no-deploy=local-storage,traefik,servicelb,metrics-server@server:*' --image +${{ matrix.k8s }}
       - run: kubectl version
       # Install CRDs
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
         with:
           repository: kubernetes-sigs/gateway-api
           ref: 4f86f0bd65173b04dadb558f63fbbd53330736d2 # 0.5.0-rc1
@@ -48,7 +48,7 @@ jobs:
       - run: kubectl apply -k gateway-api/config/crd/experimental/
       # Setup just
       - uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
       # Run tests
       - run: just fetch
       - run: just test-build --package=integration

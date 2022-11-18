@@ -26,11 +26,13 @@ jobs:
         run: |
           ref=${{ github.ref }}
           if [[ "$ref" == refs/tags/release/* ]]; then
-            echo ::set-output name=publish::true
-            echo ::set-output name=version::"${ref##refs/tags/release/}"
+            ( echo version="${ref##refs/tags/release/}"
+              echo publish=true
+            ) >> "$GITHUB_OUTPUT"
           else
             sha=${{ github.sha }}
-            echo ::set-output name=version::"test-${sha:0:7}"
+            ( echo version="test-${sha:0:7}"
+            ) >> "$GITHUB_OUTPUT"
           fi
     outputs:
       publish: ${{ steps.meta.outputs.publish }}
@@ -39,7 +41,7 @@ jobs:
   test:
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    container: docker://ghcr.io/linkerd/dev:v32-rust
+    container: docker://ghcr.io/linkerd/dev:v34-rust
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
       - run: just fetch
@@ -53,17 +55,18 @@ jobs:
       contents: write
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    container: docker://ghcr.io/linkerd/dev:v32-rust
+    container: docker://ghcr.io/linkerd/dev:v34-rust
     steps:
       - if: needs.meta.outputs.publish
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
       - if: needs.meta.outputs.publish
         shell: bash
         run: |
-          version=$(cargo metadata --format-version=1 | jq -r '.packages[] | select(.name == "k8s-gateway-api") | .version')
+          just-cargo fetch
+          crate=$(just-cargo crate-version k8s-gateway-api)
           tag="${{ needs.meta.outputs.version }}"
-          if [[ "v${version}" != "$tag" ]]; then
-            echo "::error ::Crate version v${version} does not match tag ${tag}"
+          if [[ "$crate" != "$tag" ]]; then
+            echo "::error ::Crate version ${crate} does not match tag ${tag}"
             exit 1
           fi
       - if: needs.meta.outputs.publish
@@ -77,9 +80,10 @@ jobs:
     needs: [meta, release]
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    container: docker://ghcr.io/linkerd/dev:v32-rust
+    container: docker://ghcr.io/linkerd/dev:v34-rust
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
-      - run: just publish --dry-run
-      - if: needs.meta.outputs.publish
+      - if: needs.meta.outputs.publish == ''
+        run: just publish --dry-run
+      - if: needs.meta.outputs.publish == 'true'
         run: just publish --token=${{ secrets.CRATESIO_TOKEN }}

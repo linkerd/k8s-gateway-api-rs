@@ -488,13 +488,29 @@ pub enum HttpPathModifier {
     /// ReplaceFullPath specifies the value with which to replace the full path
     /// of a request during a rewrite or redirect.
     #[serde(rename_all = "camelCase")]
-    ReplaceFullPath(String),
+    ReplaceFullPath(PathModifierReplaceFullPath),
 
     /// ReplacePrefixMatch specifies the value with which to replace the prefix
     /// match of a request during a rewrite or redirect. For example, a request
     /// to "/foo/bar" with a prefix match of "/foo" would be modified to "/bar".
     #[serde(rename_all = "camelCase")]
-    ReplacePrefixMatch(String),
+    ReplacePrefixMatch(PathModifierReplacePrefixMatch),
+}
+
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
+#[serde(rename_all = "camelCase")]
+pub struct PathModifierReplaceFullPath {
+    pub replace_full_path: String,
+}
+
+#[derive(
+    Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
+#[serde(rename_all = "camelCase")]
+pub struct PathModifierReplacePrefixMatch {
+    replace_prefix_match: String,
 }
 
 /// HTTPRequestRedirect defines a filter that redirects a request. This filter
@@ -628,4 +644,37 @@ pub struct HttpRouteStatus {
     /// Common route status information.
     #[serde(flatten)]
     pub inner: RouteStatus,
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_deserialize_http_route() {
+        // Test json with a URLRewrote
+        let test_json = r#"{
+            "apiVersion":"gateway.networking.k8s.io/v1beta1",
+            "kind":"HTTPRoute",
+            "metadata":{"name":"route_name"},
+            "spec":{
+                "parentRefs":null,
+                "hostnames":null,
+                "rules":[{
+                    "matches":null,
+                    "filters":[{
+                        "type":"URLRewrite",
+                        "urlRewrite":{
+                            "hostname":null,
+                            "path":{
+                                "type":"ReplacePrefixMatch",
+                                "replacePrefixMatch":"/"
+                            }
+                        }
+                    }],
+                    "backendRefs":null
+                }]}}"#;
+        let route: Result<HttpRoute, _> = serde_json::from_str(test_json);
+        assert!(route.is_ok());
+    }
 }

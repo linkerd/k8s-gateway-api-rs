@@ -44,7 +44,7 @@ jobs:
           curl --proto =https --tlsv1.3 -LsSv "$url" | tar zvxf - -C /usr/local/bin cargo-nextest
       - name: Install dev utils
         run: |
-          sha=574d6bab940a5fcfcd49169cd0b24ee72e2b5a04 # dev:v34
+          sha=ca8e6542459ff8225146e72bdcda68eb18aba07a # dev:v39
           cd /usr/local/bin
           for util in cargo k3d ; do
             curl --proto =https --tlsv1.3 -fLsSvO "https://raw.githubusercontent.com/linkerd/dev/$sha/bin/just-$util"

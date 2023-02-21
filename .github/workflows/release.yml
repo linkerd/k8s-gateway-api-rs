@@ -80,7 +80,7 @@ jobs:
     needs: [meta, release]
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    container: docker://ghcr.io/linkerd/dev:v34-rust
+    container: docker://ghcr.io/linkerd/dev:v39-rust
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
       - if: needs.meta.outputs.publish == ''

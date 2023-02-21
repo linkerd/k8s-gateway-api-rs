@@ -6,12 +6,12 @@ license = "Apache-2.0"
 publish = false
 
 [dev-dependencies]
-k8s-openapi = { version = "0.16", features = ["v1_21"] }
+k8s-openapi = { version = "0.17", features = ["v1_21"] }
 tokio = { version = "1", features = ["macros", "rt"] }
 tracing = "0.1"
 k8s-gateway-api = { path = ".." }
 
 [dev-dependencies.kube]
-version = "0.76"
+version = "0.78"
 default-features = false
 features = ["client", "openssl-tls", "runtime", "ws"]

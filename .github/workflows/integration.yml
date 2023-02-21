@@ -30,7 +30,6 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-      # TODO(ver) Figure out how to use tools from the dev image.
       # Install just* tooling
       - uses: linkerd/dev/actions/setup-tools@v39
       # Configure the default Rust toolchain
@@ -38,7 +37,7 @@ jobs:
       # Setup a cluster
       - run: curl --proto =https --tlsv1.3 -fLsSv "https://raw.githubusercontent.com/k3d-io/k3d/${K3D_VERSION}/install.sh" | bash
       - run: k3d --version
-      - run: just-k3d K8S_VERSION=${{ matrix.k8s }} create
+      - run: just-k3d K8S_CHANNEL=${{ matrix.k8s }} create
       - run: kubectl version
       # Install CRDs
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8

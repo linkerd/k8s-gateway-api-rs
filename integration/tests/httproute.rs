@@ -1,6 +1,6 @@
 use k8s_gateway_api::{
-    BackendRef, HttpBackendRef, HttpHeaderMatch, HttpRoute, HttpRouteMatch, HttpRouteRule,
-    HttpRouteSpec,
+    BackendObjectReference, BackendRef, HttpBackendRef, HttpHeaderMatch, HttpRoute, HttpRouteMatch,
+    HttpRouteRule, HttpRouteSpec,
 };
 use kube::{api::PostParams, core::ObjectMeta};
 
@@ -26,16 +26,14 @@ async fn round_trip() {
                     backend_refs: Some(vec![
                         HttpBackendRef {
                             backend_ref: Some(BackendRef {
-                                name: "bar-v1".to_string(),
-                                port: 8080,
+                                inner: mk_inner_ref("bar-v1", None, Some(8080)),
                                 weight: Some(90),
                             }),
                             filters: None,
                         },
                         HttpBackendRef {
                             backend_ref: Some(BackendRef {
-                                name: "bar-v2".to_string(),
-                                port: 8080,
+                                inner: mk_inner_ref("bar-v2", None, Some(8080)),
                                 weight: Some(10),
                             }),
                             filters: None,
@@ -54,8 +52,7 @@ async fn round_trip() {
                     }]),
                     backend_refs: Some(vec![HttpBackendRef {
                         backend_ref: Some(BackendRef {
-                            name: "bar-v2".to_string(),
-                            port: 8080,
+                            inner: mk_inner_ref("bar-v2", None, Some(8080)),
                             weight: None,
                         }),
                         filters: None,
@@ -80,4 +77,18 @@ async fn round_trip() {
     api.delete("bar-route", &Default::default())
         .await
         .expect("failed to delete resource");
+}
+
+fn mk_inner_ref(
+    name: &str,
+    namespace: Option<String>,
+    port: Option<u16>,
+) -> BackendObjectReference {
+    BackendObjectReference {
+        group: None, // core group inferred
+        kind: None,  // defaults to Service when not specified
+        name: name.to_string(),
+        namespace, // defaults to local namespace when unspecified
+        port,
+    }
 }

@@ -144,6 +144,7 @@ pub struct BackendRef {
     pub weight: Option<u16>,
 
     /// BackendObjectReference references a Kubernetes object.
+    #[serde(flatten)]
     pub inner: BackendObjectReference,
 }
 

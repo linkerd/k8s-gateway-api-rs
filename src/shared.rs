@@ -1,5 +1,7 @@
 use k8s_openapi::apimachinery::pkg::apis::meta::v1 as metav1;
 
+use crate::BackendObjectReference;
+
 /// ParentReference identifies an API object (usually a Gateway) that can be considered
 /// a parent of this resource (usually a route). The only kind of parent resource
 /// with "Core" support is Gateway. This API may be extended in the future to
@@ -141,9 +143,9 @@ pub struct BackendRef {
     /// Support for this field varies based on the context where used.
     pub weight: Option<u16>,
 
-    pub name: String,
-
-    pub port: PortNumber,
+    /// BackendObjectReference references a Kubernetes object.
+    #[serde(flatten)]
+    pub inner: BackendObjectReference,
 }
 
 /// RouteConditionType is a type of condition for a route.

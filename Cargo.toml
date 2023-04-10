@@ -16,7 +16,7 @@ default = []
 experimental = []
 
 [dependencies]
-kube = { version = "0.80", default-features = false, features = ["derive"] }
+kube = { version = "0.82", default-features = false, features = ["derive"] }
 k8s-openapi = { version = "0.17", features = ["schemars"] }
 schemars = { version = "0.8", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }

@@ -10,8 +10,17 @@ use crate::*;
 ///
 /// All cross-namespace references in Gateway API (with the exception of
 /// cross-namespace Gateway-route attachment) require a ReferenceGrant.
-#[derive(Clone, Debug, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-pub struct ReferenceGrant {
+#[derive(
+    Clone, Debug, kube::CustomResource, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
+)]
+#[kube(
+    group = "gateway.networking.k8s.io",
+    version = "v1beta1",
+    kind = "ReferenceGrant",
+    struct = "ReferenceGrant",
+    namespaced
+)]
+pub struct ReferenceGrantSpec {
     /// From describes the trusted namespaces and kinds that can reference the
     /// resources described in "To". Each entry in this list must be considered
     /// to be an additional place that references can be valid from, or to put
@@ -40,13 +49,20 @@ pub struct ReferenceGrantFrom {
     pub group: Group,
 
     /// Kind is the kind of the referent. Although implementations may support
-    /// additional resources, the following Route types are part of the "Core"
-    /// support level for this field:
+    /// additional resources, the following types are part of the "Core" support
+    /// level for this field.
     ///
-    /// * HTTPRoute
-    /// * TCPRoute
-    /// * TLSRoute
-    /// * UDPRoute
+    /// When used to permit a SecretObjectReference:
+    ///
+    /// - Gateway
+    ///
+    /// When used to permit a BackendObjectReference:
+    ///
+    /// - GRPCRoute
+    /// - HTTPRoute
+    /// - TCPRoute
+    /// - TLSRoute
+    /// - UDPRoute
     pub kind: Kind,
 
     /// Namespace is the namespace of the referent.
@@ -69,7 +85,8 @@ pub struct ReferenceGrantTo {
     /// additional resources, the following types are part of the "Core" support
     /// level for this field:
     ///
-    /// * Service
+    /// - Secret when used to permit a SecretObjectReference
+    /// - Service when used to permit a BackendObjectReference
     pub kind: Kind,
 
     /// Name is the name of the referent. When unspecified, this policy

@@ -35,7 +35,7 @@ pub struct ReferenceGrantSpec {
     /// way, entries must be combined using OR.
     ///
     /// Support: Core
-    pub to: Vec<ReferenceGrantFrom>,
+    pub to: Vec<ReferenceGrantTo>,
 }
 
 /// ReferenceGrantFrom describes trusted namespaces and kinds.

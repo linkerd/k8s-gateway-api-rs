@@ -373,6 +373,7 @@ pub type GatewayConditionReason = String;
 
 /// ListenerStatus is the status associated with a Listener.
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
+#[serde(rename_all = "camelCase")]
 pub struct ListenerStatus {
     /// Name is the name of the Listener that this status corresponds to.
     pub name: SectionName,

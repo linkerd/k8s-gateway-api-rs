@@ -6,7 +6,7 @@ license = "Apache-2.0"
 publish = false
 
 [dev-dependencies]
-k8s-openapi = { version = "0.19", features = ["v1_27"] }
+k8s-openapi = { version = "0.20", features = ["v1_27"] }
 tokio = { version = "1", features = ["macros", "rt"] }
 tracing = "0.1"
 k8s-gateway-api = { path = ".." }

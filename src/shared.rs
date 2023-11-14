@@ -3,9 +3,14 @@ use k8s_openapi::apimachinery::pkg::apis::meta::v1 as metav1;
 use crate::BackendObjectReference;
 
 /// ParentReference identifies an API object (usually a Gateway) that can be considered
-/// a parent of this resource (usually a route). The only kind of parent resource
-/// with "Core" support is Gateway. This API may be extended in the future to
-/// support additional kinds of parent resources, such as HTTPRoute.
+/// a parent of this resource (usually a route). There are two kinds of parent resources
+/// with "Core" support:
+///
+/// * Gateway (Gateway conformance profile)
+/// * Service (Mesh conformance profile, experimental, ClusterIP Services only)
+///
+/// This API may be extended in the future to support additional kinds of parent
+/// resources.
 ///
 /// The API object must be valid in the cluster; the Group and Kind must
 /// be registered in the cluster for this reference to be valid.
@@ -15,18 +20,41 @@ use crate::BackendObjectReference;
 #[serde(rename_all = "camelCase")]
 pub struct ParentReference {
     /// Group is the group of the referent.
+    /// When unspecified, "gateway.networking.k8s.io" is inferred.
+    /// To set the core API group (such as for a "Service" kind referent),
+    /// Group must be explicitly set to "" (empty string).
     ///
     /// Support: Core
     pub group: Option<Group>,
 
     /// Kind is kind of the referent.
     ///
-    /// Support: Core (Gateway)
-    /// Support: Custom (Other Resources)
+    /// There are two kinds of parent resources with "Core" support:
+    ///
+    /// * Gateway (Gateway conformance profile)
+    /// * Service (Mesh conformance profile, experimental, ClusterIP Services only)
+    ///
+    /// Support for other resources is Implementation-Specific.
     pub kind: Option<Kind>,
 
-    /// Namespace is the namespace of the referent. When unspecified (or empty
-    /// string), this refers to the local namespace of the Route.
+    /// Namespace is the namespace of the referent. When unspecified, this refers
+    /// to the local namespace of the Route.
+    ///
+    /// Note that there are specific rules for ParentRefs which cross namespace
+    /// boundaries. Cross-namespace references are only valid if they are explicitly
+    /// allowed by something in the namespace they are referring to. For example:
+    /// Gateway has the AllowedRoutes field, and ReferenceGrant provides a
+    /// generic way to enable any other kind of cross-namespace reference.
+    ///
+    /// ParentRefs from a Route to a Service in the same namespace are "producer"
+    /// routes, which apply default routing rules to inbound connections from
+    /// any namespace to the Service.
+    ///
+    /// ParentRefs from a Route to a Service in a different namespace are
+    /// "consumer" routes, and these routing rules are only applied to outbound
+    /// connections originating from the same namespace as the Route, for which
+    /// the intended destination of the connections are a Service targeted as a
+    /// ParentRef of the Route.
     ///
     /// Support: Core
     pub namespace: Option<Namespace>,
@@ -42,33 +70,42 @@ pub struct ParentReference {
     /// * Gateway: Listener Name. When both Port (experimental) and SectionName
     /// are specified, the name and port of the selected listener must match
     /// both specified values.
+    /// * Service: Port Name. When both Port (experimental) and SectionName
+    /// are specified, the name and port of the selected listener must match
+    /// both specified values. Note that attaching Routes to Services as Parents
+    /// is part of experimental Mesh support and is not supported for any other
+    /// purpose.
     ///
-    /// Implementations MAY choose to support attaching Routes to other
-    /// resources.  If that is the case, they MUST clearly document how
-    /// SectionName is interpreted.
+    /// Implementations MAY choose to support attaching Routes to other resources.
+    /// If that is the case, they MUST clearly document how SectionName is
+    /// interpreted.
     ///
-    /// When unspecified (empty string), this will reference the entire
-    /// resource.  For the purpose of status, an attachment is considered
-    /// successful if at least one section in the parent resource accepts it.
-    /// For example, Gateway listeners can restrict which Routes can attach to
-    /// them by Route kind, namespace, or hostname. If 1 of 2 Gateway listeners
-    /// accept attachment from the referencing Route, the Route MUST be
-    /// considered successfully attached. If no Gateway listeners accept
-    /// attachment from this Route, the Route MUST be considered detached from
-    /// the Gateway.
+    /// When unspecified (empty string), this will reference the entire resource.
+    /// For the purpose of status, an attachment is considered successful if at
+    /// least one section in the parent resource accepts it. For example, Gateway
+    /// listeners can restrict which Routes can attach to them by Route kind,
+    /// namespace, or hostname. If 1 of 2 Gateway listeners accept attachment from
+    /// the referencing Route, the Route MUST be considered successfully
+    /// attached. If no Gateway listeners accept attachment from this Route, the
+    /// Route MUST be considered detached from the Gateway.
     ///
     /// Support: Core
     pub section_name: Option<SectionName>,
 
     /// Port is the network port this Route targets. It can be interpreted
-    /// differently based on the type of parent resource:
+    /// differently based on the type of parent resource.
     ///
-    /// * Gateway: All listeners listening on the specified port that also
-    /// support this kind of Route(and select this Route). It's not recommended
-    /// to set `Port` unless the networking behaviors specified in a Route must
-    /// apply to a specific port as opposed to a listener(s) whose port(s) may
-    /// be changed. When both Port and SectionName are specified, the name and
-    /// port of the selected listener must match both specified values.
+    /// When the parent resource is a Gateway, this targets all listeners
+    /// listening on the specified port that also support this kind of Route(and
+    /// select this Route). It's not recommended to set `Port` unless the
+    /// networking behaviors specified in a Route must apply to a specific port
+    /// as opposed to a listener(s) whose port(s) may be changed. When both Port
+    /// and SectionName are specified, the name and port of the selected listener
+    /// must match both specified values.
+    ///
+    /// When the parent resource is a Service, this targets a specific port in the
+    /// Service spec. When both Port (experimental) and SectionName are specified,
+    /// the name and port of the selected port must match both specified values.
     ///
     /// Implementations MAY choose to support other parent resources.
     /// Implementations supporting other types of parent resources MUST clearly
@@ -79,8 +116,8 @@ pub struct ParentReference {
     /// listeners can restrict which Routes can attach to them by Route kind,
     /// namespace, or hostname. If 1 of 2 Gateway listeners accept attachment
     /// from the referencing Route, the Route MUST be considered successfully
-    /// attached. If no Gateway listeners accept attachment from this Route, the
-    /// Route MUST be considered detached from the Gateway.
+    /// attached. If no Gateway listeners accept attachment from this Route,
+    /// the Route MUST be considered detached from the Gateway.
     ///
     /// Support: Extended
     pub port: Option<PortNumber>,
@@ -93,25 +130,65 @@ pub struct ParentReference {
 )]
 #[serde(rename_all = "camelCase")]
 pub struct CommonRouteSpec {
-    /// ParentRefs references the resources (usually Gateways) that a Route
-    /// wants to be attached to. Note that the referenced parent resource needs
-    /// to allow this for the attachment to be complete. For Gateways, that
-    /// means the Gateway needs to allow attachment from Routes of this kind and
-    /// namespace.
+    /// ParentRefs references the resources (usually Gateways) that a Route wants
+    /// to be attached to. Note that the referenced parent resource needs to
+    /// allow this for the attachment to be complete. For Gateways, that means
+    /// the Gateway needs to allow attachment from Routes of this kind and
+    /// namespace. For Services, that means the Service must either be in the same
+    /// namespace for a "producer" route, or the mesh implementation must support
+    /// and allow "consumer" routes for the referenced Service. ReferenceGrant is
+    /// not applicable for governing ParentRefs to Services - it is not possible to
+    /// create a "producer" route for a Service in a different namespace from the
+    /// Route.
     ///
-    /// The only kind of parent resource with "Core" support is Gateway. This
-    /// API may be extended in the future to support additional kinds of parent
-    /// resources such as one of the route kinds.
+    /// There are two kinds of parent resources with "Core" support:
     ///
-    /// It is invalid to reference an identical parent more than once. It is
-    /// valid to reference multiple distinct sections within the same parent
-    /// resource, such as 2 Listeners within a Gateway.
+    /// * Gateway (Gateway conformance profile)
+    /// * Service (Mesh conformance profile, experimental, ClusterIP Services only)
+    /// This API may be extended in the future to support additional kinds of parent
+    /// resources.
     ///
-    /// It is possible to separately reference multiple distinct objects that
-    /// may be collapsed by an implementation. For example, some implementations
-    /// may choose to merge compatible Gateway Listeners together. If that is
-    /// the case, the list of routes attached to those resources should also be
+    /// ParentRefs must be _distinct_. This means either that:
+    ///
+    /// * They select different objects.  If this is the case, then parentRef
+    ///   entries are distinct. In terms of fields, this means that the
+    ///   multi-part key defined by `group`, `kind`, `namespace`, and `name` must
+    ///   be unique across all parentRef entries in the Route.
+    /// * They do not select different objects, but for each optional field used,
+    ///   each ParentRef that selects the same object must set the same set of
+    ///   optional fields to different values. If one ParentRef sets a
+    ///   combination of optional fields, all must set the same combination.
+    ///
+    /// Some examples:
+    ///
+    /// * If one ParentRef sets `sectionName`, all ParentRefs referencing the
+    ///   same object must also set `sectionName`.
+    /// * If one ParentRef sets `port`, all ParentRefs referencing the same
+    ///   object must also set `port`.
+    /// * If one ParentRef sets `sectionName` and `port`, all ParentRefs
+    ///   referencing the same object must also set `sectionName` and `port`.
+    ///
+    /// It is possible to separately reference multiple distinct objects that may
+    /// be collapsed by an implementation. For example, some implementations may
+    /// choose to merge compatible Gateway Listeners together. If that is the
+    /// case, the list of routes attached to those resources should also be
     /// merged.
+    ///
+    /// Note that for ParentRefs that cross namespace boundaries, there are specific
+    /// rules. Cross-namespace references are only valid if they are explicitly
+    /// allowed by something in the namespace they are referring to. For example,
+    /// Gateway has the AllowedRoutes field, and ReferenceGrant provides a
+    /// generic way to enable other kinds of cross-namespace reference.
+    ///
+    /// ParentRefs from a Route to a Service in the same namespace are "producer"
+    /// routes, which apply default routing rules to inbound connections from
+    /// any namespace to the Service.
+    ///
+    /// ParentRefs from a Route to a Service in a different namespace are
+    /// "consumer" routes, and these routing rules are only applied to outbound
+    /// connections originating from the same namespace as the Route, for which
+    /// the intended destination of the connections are a Service targeted as a
+    /// ParentRef of the Route.
     pub parent_refs: Option<Vec<ParentReference>>,
 }
 
@@ -121,9 +198,28 @@ pub type PortNumber = u16;
 /// BackendRef defines how a Route should forward a request to a Kubernetes
 /// resource.
 ///
-/// Note that when a namespace is specified, a ReferencePolicy object is
-/// required in the referent namespace to allow that namespace's owner to accept
-/// the reference. See the ReferencePolicy documentation for details.
+/// Note that when a namespace different than the local namespace is specified, a
+/// ReferenceGrant object is required in the referent namespace to allow that
+/// namespace's owner to accept the reference. See the ReferenceGrant
+/// documentation for details.
+///
+/// When the BackendRef points to a Kubernetes Service, implementations SHOULD
+/// honor the appProtocol field if it is set for the target Service Port.
+///
+/// Implementations supporting appProtocol SHOULD recognize the Kubernetes
+/// Standard Application Protocols defined in KEP-3726.
+///
+/// If a Service appProtocol isn't specified, an implementation MAY infer the
+/// backend protocol through its own means. Implementations MAY infer the
+/// protocol from the Route type referring to the backend Service.
+///
+/// If a Route is not able to send traffic to the backend using the specified
+/// protocol then the backend is considered invalid. Implementations MUST set the
+/// "ResolvedRefs" condition to "False" with the "UnsupportedProtocol" reason.
+///
+/// Note that when the BackendTLSPolicy object is enabled by the implementation,
+/// there are some extra rules about validity to consider here. See the fields
+/// where this struct is used for more information about the exact behavior.
 #[derive(
     Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
 )]
@@ -135,9 +231,9 @@ pub struct BackendRef {
     /// implementation supports. Weight is not a percentage and the sum of
     /// weights does not need to equal 100.
     ///
-    /// If only one backend is specified and it has a weight greater than 0,
-    /// 100% of the traffic is forwarded to that backend. If weight is set to 0,
-    /// no traffic should be forwarded for this entry. If unspecified, weight
+    /// If only one backend is specified and it has a weight greater than 0, 100%
+    /// of the traffic is forwarded to that backend. If weight is set to 0, no
+    /// traffic should be forwarded for this entry. If unspecified, weight
     /// defaults to 1.
     ///
     /// Support for this field varies based on the context where used.
@@ -179,25 +275,25 @@ pub struct RouteParentStatus {
     /// [names]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
     pub controller_name: GatewayController,
 
-    /// Conditions describes the status of the route with respect to the
-    /// Gateway. Note that the route's availability is also subject to the
-    /// Gateway's own status conditions and listener status.
+    /// Conditions describes the status of the route with respect to the Gateway.
+    /// Note that the route's availability is also subject to the Gateway's own
+    /// status conditions and listener status.
     ///
     /// If the Route's ParentRef specifies an existing Gateway that supports
     /// Routes of this kind AND that Gateway's controller has sufficient access,
     /// then that Gateway's controller MUST set the "Accepted" condition on the
-    /// Route, to indicate whether the route has been accepted or rejected by
-    /// the Gateway, and why.
+    /// Route, to indicate whether the route has been accepted or rejected by the
+    /// Gateway, and why.
     ///
     /// A Route MUST be considered "Accepted" if at least one of the Route's
     /// rules is implemented by the Gateway.
     ///
-    /// There are a number of cases where the "Accepted" condition may not be
-    /// set due to lack of controller visibility, that includes when:
+    /// There are a number of cases where the "Accepted" condition may not be set
+    /// due to lack of controller visibility, that includes when:
     ///
     /// * The Route refers to a non-existent parent.
     /// * The Route is of a type that the controller does not support.
-    /// * The Route is in a namespace the the controller does not have access to.
+    /// * The Route is in a namespace the controller does not have access to.
     pub conditions: Vec<metav1::Condition>,
 }
 
@@ -352,4 +448,17 @@ pub type AnnotationKey = String;
 pub type AnnotationValue = String;
 
 /// AddressType defines how a network address is represented as a text string.
+/// This may take two possible forms:
+///
+/// * A predefined CamelCase string identifier (currently limited to `IPAddress` or `Hostname`)
+/// * A domain-prefixed string identifier (like `acme.io/CustomAddressType`)
+///
+/// Values `IPAddress` and `Hostname` have Extended support.
+///
+/// The `NamedAddress` value has been deprecated in favor of implementation
+/// specific domain-prefixed strings.
+///
+/// All other values, including domain-prefixed values have Implementation-specific support,
+/// which are used in implementation-specific behaviors. Support for additional
+/// predefined CamelCase identifiers may be added in future releases.
 pub type AddressType = String;

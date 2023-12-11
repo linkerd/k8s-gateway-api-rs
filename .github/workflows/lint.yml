@@ -19,7 +19,7 @@ jobs:
   lint:
     timeout-minutes: 20
     runs-on: ubuntu-latest
-    container: docker://ghcr.io/linkerd/dev:v39-rust
+    container: docker://ghcr.io/linkerd/dev:v42-rust
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
       - run: just fetch

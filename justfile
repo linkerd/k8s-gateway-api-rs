@@ -23,7 +23,7 @@ deny:
     cargo-deny --all-features check
 
 docs:
-    just-cargo doc --frozen --no-deps --features=k8s-openapi/v1_25
+    just-cargo doc --frozen --no-deps --features=k8s-openapi/latest
 
 test-build *flags:
     just-cargo test-build --frozen {{ flags }}
@@ -32,7 +32,7 @@ test *flags:
     just-cargo test --frozen {{ flags }}
 
 publish *flags:
-    cargo publish --features=k8s-openapi/v1_25 {{ flags }}
+    cargo publish --features=k8s-openapi/latest {{ flags }}
 
 action-lint:
     just-dev lint-actions

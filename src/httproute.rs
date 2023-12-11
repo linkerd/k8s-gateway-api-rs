@@ -609,9 +609,9 @@ pub enum HttpPathModifier {
     /// /foo/bar     | /foo/        | /xyz/          | /xyz/bar
     /// /foo         | /foo         | /xyz           | /xyz
     /// /foo/        | /foo         | /xyz           | /xyz/
-    /// /foo/bar     | /foo         | <empty string> | /bar
-    /// /foo/        | /foo         | <empty string> | /
-    /// /foo         | /foo         | <empty string> | /
+    /// /foo/bar     | /foo         | _empty string_ | /bar
+    /// /foo/        | /foo         | _empty string_ | /
+    /// /foo         | /foo         | _empty string_ | /
     /// /foo/        | /foo         | /              | /
     /// /foo         | /foo         | /              | /
     #[serde(rename_all = "camelCase")]

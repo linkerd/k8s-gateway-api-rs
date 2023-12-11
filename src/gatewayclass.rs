@@ -1,29 +1,29 @@
 use crate::*;
 use k8s_openapi::apimachinery::pkg::apis::meta::v1 as metav1;
 
-// GatewayClass describes a class of Gateways available to the user for creating
-// Gateway resources.
-//
-// It is recommended that this resource be used as a template for Gateways. This
-// means that a Gateway is based on the state of the GatewayClass at the time it
-// was created and changes to the GatewayClass or associated parameters are not
-// propagated down to existing Gateways. This recommendation is intended to
-// limit the blast radius of changes to GatewayClass or associated parameters.
-// If implementations choose to propagate GatewayClass changes to existing
-// Gateways, that MUST be clearly documented by the implementation.
-//
-// Whenever one or more Gateways are using a GatewayClass, implementations MUST
-// add the `gateway-exists-finalizer.gateway.networking.k8s.io` finalizer on the
-// associated GatewayClass. This ensures that a GatewayClass associated with a
-// Gateway is not deleted while in use.
-//
-// GatewayClass is a Cluster level resource.
+/// GatewayClass describes a class of Gateways available to the user for creating
+/// Gateway resources.
+///
+/// It is recommended that this resource be used as a template for Gateways. This
+/// means that a Gateway is based on the state of the GatewayClass at the time it
+/// was created and changes to the GatewayClass or associated parameters are not
+/// propagated down to existing Gateways. This recommendation is intended to
+/// limit the blast radius of changes to GatewayClass or associated parameters.
+/// If implementations choose to propagate GatewayClass changes to existing
+/// Gateways, that MUST be clearly documented by the implementation.
+///
+/// Whenever one or more Gateways are using a GatewayClass, implementations SHOULD
+/// add the `gateway-exists-finalizer.gateway.networking.k8s.io` finalizer on the
+/// associated GatewayClass. This ensures that a GatewayClass associated with a
+/// Gateway is not deleted while in use.
+///
+/// GatewayClass is a Cluster level resource.
 #[derive(
     Clone, Debug, kube::CustomResource, serde::Deserialize, serde::Serialize, schemars::JsonSchema,
 )]
 #[kube(
     group = "gateway.networking.k8s.io",
-    version = "v1beta1",
+    version = "v1",
     kind = "GatewayClass",
     status = "GatewayClassStatus"
 )]
@@ -35,6 +35,8 @@ pub struct GatewayClassSpec {
     /// Example: "example.net/gateway-controller".
     ///
     /// This field is not mutable and cannot be empty.
+    ///
+    /// Support: Core
     pub controller_name: GatewayController,
 
     /// ParametersRef is a reference to a resource that contains the
@@ -49,7 +51,7 @@ pub struct GatewayClassSpec {
     /// If the referent cannot be found, the GatewayClass's "InvalidParameters"
     /// status condition will be true.
     ///
-    /// Support: Custom
+    /// Support: Implementation-specific
     pub paramters_ref: Option<ParametersReference>,
 
     /// Description helps describe a GatewayClass with more details.
@@ -96,4 +98,12 @@ pub struct GatewayClassStatus {
     /// Controllers should prefer to publish conditions using values of
     /// GatewayClassConditionType for the type of each Condition.
     pub conditions: Option<Vec<metav1::Condition>>,
+
+    /// SupportedFeatures is the set of features the GatewayClass support.
+    /// It MUST be sorted in ascending alphabetical order.
+    pub supported_features: Option<Vec<SupportedFeature>>,
 }
+
+/// SupportedFeature is used to describe distinct features that are covered by
+/// conformance tests.
+pub type SupportedFeature = String;

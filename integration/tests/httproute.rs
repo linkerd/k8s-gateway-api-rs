@@ -41,6 +41,7 @@ async fn round_trip() {
                     ]),
                     filters: None,
                     matches: None,
+                    timeouts: None,
                 },
                 HttpRouteRule {
                     matches: Some(vec![HttpRouteMatch {
@@ -58,6 +59,7 @@ async fn round_trip() {
                         filters: None,
                     }]),
                     filters: None,
+                    timeouts: None,
                 },
             ]),
             ..HttpRouteSpec::default()

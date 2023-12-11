@@ -47,7 +47,7 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
         with:
           repository: kubernetes-sigs/gateway-api
-          ref: 4f86f0bd65173b04dadb558f63fbbd53330736d2 # 0.5.0-rc1
+          ref: a0684982eddeb0360e215e0de322c3210ac49bb9 # v1.0.0
           path: gateway-api
       - run: kubectl apply -k gateway-api/config/crd/experimental/
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11

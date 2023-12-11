@@ -17,7 +17,7 @@ use crate::*;
     group = "gateway.networking.k8s.io",
     version = "v1",
     kind = "HTTPRoute",
-    struct = "HttpRoute",
+    root = "HttpRoute",
     status = "HttpRouteStatus",
     namespaced
 )]

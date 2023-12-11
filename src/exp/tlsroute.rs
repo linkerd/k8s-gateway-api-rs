@@ -13,7 +13,7 @@ use crate::*;
     group = "gateway.networking.k8s.io",
     version = "v1alpha2",
     kind = "TLSRoute",
-    struct = "TlsRoute",
+    root = "TlsRoute",
     status = "TlsRouteStatus",
     namespaced
 )]

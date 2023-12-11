@@ -10,7 +10,7 @@ use crate::*;
     group = "gateway.networking.k8s.io",
     version = "v1alpha2",
     kind = "TCPRoute",
-    struct = "TcpRoute",
+    root = "TcpRoute",
     status = "TcpRouteStatus",
     namespaced
 )]

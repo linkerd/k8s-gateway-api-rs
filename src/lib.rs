@@ -8,7 +8,6 @@
 // TODO(ver): We should deny missing_docs, but this doesn't play with
 // CustomResource derivations.
 
-pub mod duration;
 mod gateway;
 mod gatewayclass;
 mod httproute;

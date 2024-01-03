@@ -2,7 +2,7 @@
 
 (Unofficial) Rust bindings for the [Kubernetes Gateway API][site].
 
-Based on [gateway-api-v1.0.0].
+Based on [gateway-api-v0.5.0-rc1].
 
 [![Crates.io][crate-badge]][crate-url]
 [![Documentation][docs-badge]][docs-url]
@@ -20,7 +20,7 @@ the *v1alpha2* types when the `experimental` feature is enabled.
 * Express validation constraints
 * Rustify/Linkify documentation
 
-[gateway-api-v1.0.0]: https://github.com/kubernetes-sigs/gateway-api/tree/a0684982eddeb0360e215e0de322c3210ac49bb9
+[gateway-api-v0.5.0-rc1]: https://github.com/kubernetes-sigs/gateway-api/tree/4f86f0bd65173b04dadb558f63fbbd53330736d2
 [site]: https://gateway-api.sigs.k8s.io/
 [crate-badge]: https://img.shields.io/crates/v/k8s-gateway-api.svg
 [crate-url]: https://crates.io/crates/k8s-gateway-api

@@ -17,7 +17,7 @@ env:
 
 jobs:
   lint:
-    timeout-minutes: 20
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     container: docker://ghcr.io/linkerd/dev:v42-rust
     steps:

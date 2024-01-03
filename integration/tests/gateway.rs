@@ -19,7 +19,6 @@ async fn round_trip() {
         },
         spec: GatewaySpec {
             gateway_class_name: "acme-lb".to_string(),
-            infrastructure: None,
             listeners: vec![Listener {
                 protocol: "HTTPS".to_string(),
                 port: 443,

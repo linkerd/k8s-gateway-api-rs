@@ -12,19 +12,22 @@ mod gateway;
 mod gatewayclass;
 mod httproute;
 mod object_reference;
+mod referencegrant;
 mod shared;
 
-pub use self::{gateway::*, gatewayclass::*, httproute::*, object_reference::*, shared::*};
+pub use self::{
+    gateway::*, gatewayclass::*, httproute::*, object_reference::*, referencegrant::*, shared::*,
+};
 
 #[cfg(feature = "experimental")]
 mod exp {
+    mod grpcroute;
     mod policy;
-    mod referencegrant;
     mod tcproute;
     mod tlsroute;
     mod udproute;
 
-    pub use self::{policy::*, referencegrant::*, tcproute::*, tlsroute::*, udproute::*};
+    pub use self::{grpcroute::*, policy::*, tcproute::*, tlsroute::*, udproute::*};
 }
 
 #[cfg(feature = "experimental")]

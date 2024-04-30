@@ -18,13 +18,16 @@ pub use self::{gateway::*, gatewayclass::*, httproute::*, object_reference::*, s
 
 #[cfg(feature = "experimental")]
 mod exp {
+    mod grpcroute;
     mod policy;
     mod referencegrant;
     mod tcproute;
     mod tlsroute;
     mod udproute;
 
-    pub use self::{policy::*, referencegrant::*, tcproute::*, tlsroute::*, udproute::*};
+    pub use self::{
+        grpcroute::*, policy::*, referencegrant::*, tcproute::*, tlsroute::*, udproute::*,
+    };
 }
 
 #[cfg(feature = "experimental")]

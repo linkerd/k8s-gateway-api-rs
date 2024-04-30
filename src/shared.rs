@@ -112,6 +112,22 @@ pub struct CommonRouteSpec {
     /// may choose to merge compatible Gateway Listeners together. If that is
     /// the case, the list of routes attached to those resources should also be
     /// merged.
+    ///
+    /// Note that for ParentRefs that cross namespace boundaries, there are specific
+    /// rules. Cross-namespace references are only valid if they are explicitly
+    /// allowed by something in the namespace they are referring to. For example,
+    /// Gateway has the AllowedRoutes field, and ReferenceGrant provides a
+    /// generic way to enable other kinds of cross-namespace reference.
+    ///
+    /// ParentRefs from a Route to a Service in the same namespace are "producer"
+    /// routes, which apply default routing rules to inbound connections from
+    /// any namespace to the Service.
+    ///
+    /// ParentRefs from a Route to a Service in a different namespace are
+    /// "consumer" routes, and these routing rules are only applied to outbound
+    /// connections originating from the same namespace as the Route, for which
+    /// the intended destination of the connections are a Service targeted as a
+    /// ParentRef of the Route.
     pub parent_refs: Option<Vec<ParentReference>>,
 }
 

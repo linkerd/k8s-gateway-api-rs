@@ -26,7 +26,7 @@ jobs:
           - v1.22
           - v1.31
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       K8S_CHANNEL: ${{ matrix.k8s }}
     steps:

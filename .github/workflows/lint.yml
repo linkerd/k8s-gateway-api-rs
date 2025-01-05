@@ -18,7 +18,7 @@ env:
 jobs:
   lint:
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     container: docker://ghcr.io/linkerd/dev:v44-rust
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11

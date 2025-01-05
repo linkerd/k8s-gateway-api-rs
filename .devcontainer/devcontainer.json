@@ -1,14 +1,6 @@
 {
 	"name": "k8s-gateway-api",
-	"image": "ghcr.io/linkerd/dev:v42",
-	"extensions": [
-		"DavidAnson.vscode-markdownlint",
-		"kokakiwi.vscode-just",
-		"NathanRidley.autotrim",
-		"rust-lang.rust-analyzer",
-		"samverschueren.final-newline",
-		"tamasfe.even-better-toml",
-	],
+	"image": "ghcr.io/linkerd/dev:v44",
 	"runArgs": [
 		"--init",
 		// Use the host network so we can access k3d, etc.
@@ -25,5 +17,21 @@
 			"target": "/var/run/docker-host.sock",
 			"type": "bind"
 		}
-	]
+	],
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli:1": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"github.vscode-github-actions",
+				"kokakiwi.vscode-just",
+				"NathanRidley.autotrim",
+				"rust-lang.rust-analyzer",
+				"ms-kubernetes-tools.vscode-kubernetes-tools",
+				"samverschueren.final-newline",
+				"tamasfe.even-better-toml"
+			]
+		}
+	}
 }

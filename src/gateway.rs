@@ -37,14 +37,12 @@ pub struct GatewaySpec {
     /// with each other if all of the following conditions are met:
     ///
     /// 1. Either each Listener within the group specifies the "HTTP" Protocol or
-    /// each Listener within the group specifies either the "HTTPS" or "TLS"
-    /// Protocol.
-    ///
+    ///    each Listener within the group specifies either the "HTTPS" or "TLS"
+    ///    Protocol.
     /// 2. Each Listener within the group specifies a Hostname that is unique
-    /// within the group.
-    ///
+    ///    within the group.
     /// 3. As a special case, one Listener within a group may omit Hostname, in
-    /// which case this Listener matches when no other Listener matches.
+    ///    which case this Listener matches when no other Listener matches.
     ///
     /// If the implementation does collapse compatible Listeners, the hostname
     /// provided in the incoming client request MUST be matched to a Listener to
@@ -105,12 +103,12 @@ pub struct Listener {
     /// Implementations MUST apply Hostname matching appropriately for each of
     /// the following protocols:
     ///
-    /// * TLS: The Listener Hostname MUST match the SNI.  * HTTP: The Listener
-    /// Hostname MUST match the Host header of the request.  * HTTPS: The
-    /// Listener Hostname SHOULD match at both the TLS and HTTP protocol layers
-    /// as described above. If an implementation does not ensure that both the
-    /// SNI and Host header match the Listener hostname, it MUST clearly document
-    /// that.
+    /// * TLS: The Listener Hostname MUST match the SNI.
+    /// * HTTP: The Listener Hostname MUST match the Host header of the request.
+    /// * HTTPS: The Listener Hostname SHOULD match at both the TLS and HTTP protocol
+    ///   layers as described above. If an implementation does not ensure that both the
+    ///   SNI and Host header match the Listener hostname, it MUST clearly document
+    ///   that.
     ///
     /// For HTTPRoute and TLSRoute resources, there is an interaction with the
     /// `spec.hostnames` array. When both listener and route specify hostnames,

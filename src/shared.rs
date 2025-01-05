@@ -40,8 +40,8 @@ pub struct ParentReference {
     /// following resources, SectionName is interpreted as the following:
     ///
     /// * Gateway: Listener Name. When both Port (experimental) and SectionName
-    /// are specified, the name and port of the selected listener must match
-    /// both specified values.
+    ///   are specified, the name and port of the selected listener must match
+    ///   both specified values.
     ///
     /// Implementations MAY choose to support attaching Routes to other
     /// resources.  If that is the case, they MUST clearly document how
@@ -64,11 +64,11 @@ pub struct ParentReference {
     /// differently based on the type of parent resource:
     ///
     /// * Gateway: All listeners listening on the specified port that also
-    /// support this kind of Route(and select this Route). It's not recommended
-    /// to set `Port` unless the networking behaviors specified in a Route must
-    /// apply to a specific port as opposed to a listener(s) whose port(s) may
-    /// be changed. When both Port and SectionName are specified, the name and
-    /// port of the selected listener must match both specified values.
+    ///   support this kind of Route(and select this Route). It's not recommended
+    ///   to set `Port` unless the networking behaviors specified in a Route must
+    ///   apply to a specific port as opposed to a listener(s) whose port(s) may
+    ///   be changed. When both Port and SectionName are specified, the name and
+    ///   port of the selected listener must match both specified values.
     ///
     /// Implementations MAY choose to support other parent resources.
     /// Implementations supporting other types of parent resources MUST clearly

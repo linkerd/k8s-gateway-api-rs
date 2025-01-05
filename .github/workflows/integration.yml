@@ -14,11 +14,9 @@ env:
   CARGO_INCREMENTAL: 0
   CARGO_NET_RETRY: 10
   RUSTUP_MAX_RETRIES: 10
-  RUST_VERSION: 1.64.0
-  K3D_VERSION: v5.4.6
   K3D_CREATE_FLAGS: '--no-lb'
   K3S_DISABLE: 'local-storage,traefik,servicelb,metrics-server@server:*'
-  NEXTEST_VERSION: '0.9.42'
+  NEXTEST_VERSION: '0.9.85'
 
 jobs:
   test:
@@ -26,18 +24,17 @@ jobs:
       matrix:
         k8s:
           - v1.22
-          - v1.28
+          - v1.31
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       K8S_CHANNEL: ${{ matrix.k8s }}
     steps:
       # Install just* tooling
-      - uses: linkerd/dev/actions/setup-tools@v42
+      - uses: linkerd/dev/actions/setup-tools@v44
       # Configure the default Rust toolchain
-      - uses: linkerd/dev/actions/setup-rust@v42
+      - uses: linkerd/dev/actions/setup-rust@v44
       # Setup a cluster
-      - run: curl --proto =https --tlsv1.3 -fLsSv "https://raw.githubusercontent.com/k3d-io/k3d/${K3D_VERSION}/install.sh" | bash
       - run: k3d --version
       - run: just-k3d create
       - run: kubectl version

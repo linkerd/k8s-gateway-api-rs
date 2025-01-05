@@ -19,7 +19,7 @@ permissions:
 jobs:
   meta:
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - id: meta
         shell: bash
@@ -40,8 +40,8 @@ jobs:
 
   test:
     timeout-minutes: 5
-    runs-on: ubuntu-latest
-    container: docker://ghcr.io/linkerd/dev:v42-rust
+    runs-on: ubuntu-22.04
+    container: docker://ghcr.io/linkerd/dev:v44-rust
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
       - run: just fetch
@@ -54,8 +54,8 @@ jobs:
     permissions:
       contents: write
     timeout-minutes: 5
-    runs-on: ubuntu-latest
-    container: docker://ghcr.io/linkerd/dev:v42-rust
+    runs-on: ubuntu-22.04
+    container: docker://ghcr.io/linkerd/dev:v44-rust
     steps:
       - if: needs.meta.outputs.publish
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
@@ -79,8 +79,8 @@ jobs:
     # Only publish the crate after the rest of the release succeeds.
     needs: [meta, release]
     timeout-minutes: 10
-    runs-on: ubuntu-latest
-    container: docker://ghcr.io/linkerd/dev:v42-rust
+    runs-on: ubuntu-22.04
+    container: docker://ghcr.io/linkerd/dev:v44-rust
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
       - if: needs.meta.outputs.publish == ''

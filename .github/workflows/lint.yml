@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-22.04
     container: docker://ghcr.io/linkerd/dev:v44-rust
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - run: just fetch
       - run: just check-fmt
       - run: just clippy

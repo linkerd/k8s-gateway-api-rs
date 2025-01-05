@@ -39,13 +39,13 @@ jobs:
       - run: just-k3d create
       - run: kubectl version
       # Install CRDs
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: kubernetes-sigs/gateway-api
           ref: 4f86f0bd65173b04dadb558f63fbbd53330736d2 # 0.5.0-rc1
           path: gateway-api
       - run: kubectl apply -k gateway-api/config/crd/experimental/
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       # Run tests
       - run: just fetch
       - run: just test-build --package=integration

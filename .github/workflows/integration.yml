@@ -23,17 +23,18 @@ jobs:
     strategy:
       matrix:
         k8s:
-          - v1.22
           - v1.31
+          - v1.37
     timeout-minutes: 10
     runs-on: ubuntu-22.04
     env:
       K8S_CHANNEL: ${{ matrix.k8s }}
+      K3S_DISABLE: traefik
     steps:
       # Install just* tooling
-      - uses: linkerd/dev/actions/setup-tools@v44
+      - uses: linkerd/dev/actions/setup-tools@v53
       # Configure the default Rust toolchain
-      - uses: linkerd/dev/actions/setup-rust@v44
+      - uses: linkerd/dev/actions/setup-rust@v53
       # Setup a cluster
       - run: k3d --version
       - run: just-k3d create

@@ -1,6 +1,6 @@
 {
 	"name": "k8s-gateway-api",
-	"image": "ghcr.io/linkerd/dev:v44",
+	"image": "ghcr.io/linkerd/dev:v53",
 	"runArgs": [
 		"--init",
 		// Use the host network so we can access k3d, etc.
